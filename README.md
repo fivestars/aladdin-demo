@@ -1,37 +1,42 @@
-## Welcome to GitHub Pages
+# Aladdin Installation
 
-You can use the [editor on GitHub](https://github.com/fivestars/aladdin-demo/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## What is Aladdin
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+**TODO:** Blurb
 
-### Markdown
+## Initial Setup
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+This section describes how to get kubernetes setup and verify that it is working. This includes installing minikube, which is used for local development in kubernetes. 
 
-```markdown
-Syntax highlighted code block
+To set up, just clone the aladdin github repository to get started **TODO:** Confirm once we have public git repository
 
-# Header 1
-## Header 2
-### Header 3
+    $ git clone git@github.com/aladdin/aladdin.git
+    $ cd aladdin
+    $ ./scripts/infra_k8s_check.sh
 
-- Bulleted
-- List
+The `infra_k8s_check.sh` script checks to see if everything necessary is installed in order to enable local development for various projects and to enable deploying to different environments. 
+- If you are missing any dependencies, the script will try and install them for you. 
+- This script is also run every time you run the ./aladdin.sh script (more about that script in the Installing our Projects section). 
+- __Important:__ Note that this tries to install specific versions of docker, virtual box, minikube, kubectl, and helm that are known to work with aladdin. If you do not want this script to override the version you already have, you will want to alter the versions in the scripts/infra_k8s_check.sh file. However, if you do this, we can not guarantee the behavior of aladdin. 
 
-1. Numbered
-2. List
+This will add aladdin to your path as a global alias, allowing you to directly call on aladdin for upcoming commands. You may wish to edit your .bashrc or .bash_profile to execute this command every time you start up a new terminal. 
 
-**Bold** and _Italic_ and `Code` text
+    $ eval $(./aladdin.sh env) 
 
-[Link](url) and ![Image](src)
-```
+**TODO:**[Our common issues confluence page]
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+# Building a Project
+The aladdin-demo is a template project that will demonstrate how to write an aladdin-compatible project. If you are creating a new project from scratch, it is recommended that you start with this template, which already provides integration with nginx, blank, blank, and blank. **TODO** This document will provide a detailed walkthrough of aladdin-demo, explaining each component and best practice guidelines in project development.
 
-### Jekyll Themes
+## Aladdin Files
+These files are required for aladdin 
+### lamp.json
+### helm 
+### docker
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/fivestars/aladdin-demo/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## Using NGINX
+We demonstrate running an nginx container within the same pod as the aladdin-demo app. Our template sets up nginx as a simple proxy server that will listen to all traffic on port 80 and forward it to the tornado app. 
 
-### Support or Contact
+The first step is to configure the nginx server. In the `nginx.conf` file under the `nginx` - `config` directories, we specify a server that listens on port 80. For all requests, it will pass it on to port 7892, which the tornado app is listening on. 
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Next, we build a docker image in the `nginx.Dockerfile` under the `build` directory. This file simply starts with an existing nginx image and copies over our configurations for it.

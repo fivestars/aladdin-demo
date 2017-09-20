@@ -1,0 +1,12 @@
+# Application configuration
+app:
+  # default to the tornado app port
+  port: 7892
+  nginx:
+    useNginx: false
+    port: 80
+
+deploy:
+  terminationGracePeriod: 50
+  replicas: 1
+

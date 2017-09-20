@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aladdin-demo 
+  labels:
+    name: aladdin-demo
+spec:
+  replicas: {{.Values.deploy.replicas}}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        deploymentconfig: aladdin-demo 
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
+      containers:
+      # aladdin-demo tornado app
+      - name: aladdin-demo-server
+        image: aladdin-demo:local
+        workingDir: /home/aladdin-demo 
+        name: aladdin-demo
+        ports:
+        - containerPort: {{ .Values.app.port }}
+          protocol: TCP
+{{ if .Values.app.nginx.useNginx }}
+      # nginx container
+      - name: {{ .Chart.Name }}-nginx
+        image: aladdin-demo-nginx:local
+        ports: 
+          - containerPort: {{ .Values.app.nginx.port }}
+            protocol: TCP
+{{ end }}
