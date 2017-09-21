@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: aladdin-demo 
+  name: aladdin-demo
   labels:
     name: aladdin-demo
 spec:

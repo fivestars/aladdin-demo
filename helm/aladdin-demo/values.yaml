@@ -10,3 +10,4 @@ deploy:
   terminationGracePeriod: 50
   replicas: 1
 
+createRedis: true

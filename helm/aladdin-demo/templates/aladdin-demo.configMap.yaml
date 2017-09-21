@@ -1,7 +1,7 @@
 apiVerson: v1
 kind: ConfigMap
 metadata: 
-  name: aladdin-template-config
+  name: aladdin-demo-config
 # Create key - value entries in the data map that other files can look up
 data:
   # Piping the result of the lookup into the quote function, just puts quotes around it
