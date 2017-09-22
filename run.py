@@ -1,21 +1,21 @@
-import redis
+import os
+import falcon
+from redis_connection import redis_conn
 
-import tornado.ioloop
-import tornado.web
+class BaseResource(object):
+    def on_get(self, req, resp):
+        resp.status = falcon.HTTP_200
+        resp.body = ('\n I can show you the world \n \n')
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("I can show you the world")
+class RedisResource(object):
+    def on_get(self, req, resp):
+        resp.status = falcon.HTTP_200
+        foo = redis_conn.get('msg')
+        resp.body = (foo)
 
-def make_app():
-    # r = redis.StrictRedis(host='aladdin-demo-redis')
-    # print r.dbsize()
-    # r.set("message", "I can show you the world")
-    return tornado.web.Application([
-        (r"/", MainHandler),
-    ])
+app = falcon.API()
 
-if __name__ == "__main__":
-    app = make_app()
-    app.listen(7892)
-    tornado.ioloop.IOLoop.current().start()
+app.add_route('/redis', RedisResource())
+app.add_route('/', BaseResource())
+
+

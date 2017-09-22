@@ -1,9 +1,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: aladdin-demo
+  name: {{ .Chart.Name }}
   labels:
-    name: aladdin-demo
+    name: {{ .Chart.Name }}
 spec:
   replicas: {{.Values.deploy.replicas}}
   strategy:
@@ -11,22 +11,26 @@ spec:
   template:
     metadata:
       labels:
-        deploymentconfig: aladdin-demo 
+        deploymentconfig: {{ .Chart.Name }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
       containers:
-      # aladdin-demo tornado app
-      - name: aladdin-demo-server
+      # aladdin-demo falcon app
+      - name: aladdin-demo
         image: aladdin-demo:local
         workingDir: /home/aladdin-demo 
-        name: aladdin-demo
         ports:
         - containerPort: {{ .Values.app.port }}
           protocol: TCP
+        envFrom:
+          # Load the data from configMap into the runtime environment
+          # This allows us to use os.environ["KEY"] to look up variables
+          - configMapRef:
+              name: {{ .Chart.Name }}-config
 {{ if .Values.app.nginx.useNginx }}
       # nginx container
       - name: {{ .Chart.Name }}-nginx
-        image: aladdin-demo-nginx:local
+        image: {{ .Chart.Name }}-nginx:local
         ports: 
           - containerPort: {{ .Values.app.nginx.port }}
             protocol: TCP

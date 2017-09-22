@@ -1,0 +1,23 @@
+{{if .Values.redis.createRedis }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-redis
+  labels:
+    name: {{ .Chart.Name }}-redis
+    app: {{ .Chart.Name }}-redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: {{ .Chart.Name }}-redis
+        app: {{ .Chart.Name }}-redis
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}-redis
+        image: redis:2.8
+        ports:
+        - containerPort: {{ .Values.redis.containerPort }}
+          protocol: TCP
+{{end}}

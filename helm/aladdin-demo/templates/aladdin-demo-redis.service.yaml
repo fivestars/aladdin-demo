@@ -1,15 +1,15 @@
-{{if .Values.createRedis }}
+{{if .Values.redis.createRedis }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: aladdin-demo-redis
+  name: {{ .Chart.Name }}-redis
   labels:
-    name: aladdin-demo-redis
-    app: aladdin-demo-redis
+    name: {{ .Chart.Name }}-redis
+    app: {{ .Chart.Name }}-redis
 spec:
   ports:
-  - port: 6379
-    targetPort: 6379
+  - port: {{ .Values.redis.port }}
+    targetPort: {{ .Values.redis.containerPort }}
   selector:
-    name: aladdin-demo-redis
+    name: {{ .Chart.Name }}-redis
 {{end}}

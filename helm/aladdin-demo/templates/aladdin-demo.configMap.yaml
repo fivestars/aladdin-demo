@@ -1,7 +1,15 @@
 apiVerson: v1
 kind: ConfigMap
 metadata: 
-  name: aladdin-demo-config
+  name: {{ .Chart.Name }}-config
+  labels:
+    project: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}-config
+    app: {{ .Chart.Name }}
 # Create key - value entries in the data map that other files can look up
 data:
-  # Piping the result of the lookup into the quote function, just puts quotes around it
+  REDIS_HOST: {{ .Chart.Name }}-redis
+  REDIS_PORT: {{ .Values.redis.port | quote }}
+  NGINX_PORT: {{ .Values.app.nginx.port | quote }}
+  UWSGI_PORT: {{ .Values.app.port | quote }}
+
