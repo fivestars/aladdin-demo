@@ -13,3 +13,20 @@ data:
   NGINX_PORT: {{ .Values.app.nginx.port | quote }}
   UWSGI_PORT: {{ .Values.app.port | quote }}
 
+---
+# ConfigMap for nginx
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-nginx-config
+data:
+  nginx.conf: {{ include "nginx-config" . | quote }}
+
+---
+# ConfigMap for uwsgi
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-uwsgi-config
+data:
+  uwsgi.yaml: {{ include "uwsgi-config" . | quote }}

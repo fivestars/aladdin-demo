@@ -35,4 +35,4 @@ WORKDIR /home/aladdin-demo
 COPY . /home/aladdin-demo
 
 # run the application with uwsgi once the container has been created
-ENTRYPOINT ["uwsgi", "uwsgi.yaml"]
+ENTRYPOINT ["uwsgi", "/config/uwsgi.yaml"]

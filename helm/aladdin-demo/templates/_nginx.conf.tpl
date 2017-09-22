@@ -1,5 +1,10 @@
-# Specify some event configs
+{{/* Config file for nginx */}}
 
+# Note: This define name is global, if loading multiple templates with the same name, the last
+# one loaded will be used.
+{{ define "nginx-config" -}}
+
+# Specify some event configs
 events {
     worker_connections 4096;
 }
@@ -18,3 +23,5 @@ http {
         }
     }
 }
+
+{{ end }}

@@ -22,6 +22,9 @@ spec:
         ports:
         - containerPort: {{ .Values.app.port }}
           protocol: TCP
+        volumeMounts:
+          - mountPath: /config/
+            name: {{ .Chart.Name }}-uwsgi-config
         envFrom:
           # Load the data from configMap into the runtime environment
           # This allows us to use os.environ["KEY"] to look up variables
@@ -30,8 +33,23 @@ spec:
 {{ if .Values.app.nginx.useNginx }}
       # nginx container
       - name: {{ .Chart.Name }}-nginx
-        image: {{ .Chart.Name }}-nginx:local
+        image: nginx:1.12-alpine
         ports: 
           - containerPort: {{ .Values.app.nginx.port }}
             protocol: TCP
+        volumeMounts:
+          - mountPath: /etc/nginx/
+            name: {{ .Chart.Name }}-nginx-config
 {{ end }}
+        envFrom:
+          # Load the data from configMap into the runtime environment
+          # This allows us to use os.environ["KEY"] to look up variables
+          - configMapRef:
+              name: {{ .Chart.Name }}-config
+      volumes:
+        - name: {{ .Chart.Name }}-nginx-config
+          configMap:
+            name: {{ .Chart.Name }}-nginx-config
+        - name: {{ .Chart.Name }}-uwsgi-config
+          configMap:
+            name: {{ .Chart.Name }}-uwsgi-config
