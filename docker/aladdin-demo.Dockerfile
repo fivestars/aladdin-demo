@@ -25,9 +25,6 @@ RUN `# Packages`\
         linux-headers \
         python3-dev
 
-# expose port 7892 to the outside world
-EXPOSE 7892
-
 # specify the directory that CMD executes from
 WORKDIR /home/aladdin-demo
 

@@ -14,12 +14,12 @@ events {
 http { 
 
     server {
-    listen 8000;
+    listen {{ .Values.app.nginx.port }};
         
         # Match incoming request uri with "/" and forward them to the uwsgi app
         # All requests will match in this case
         location / {
-            proxy_pass http://localhost:7892;
+            proxy_pass http://localhost:{{ .Values.app.port}};
         }
     }
 }

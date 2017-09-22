@@ -4,7 +4,7 @@ app:
   port: 7892
   nginx:
     useNginx: true
-    port: 8000
+    port: 8001
 
 deploy:
   terminationGracePeriod: 50
@@ -14,4 +14,3 @@ redis:
   createRedis: true
   port: 6379
   containerPort: 6379
-  
