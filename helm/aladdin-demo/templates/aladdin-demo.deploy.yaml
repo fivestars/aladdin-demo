@@ -22,6 +22,7 @@ spec:
         ports:
         - containerPort: {{ .Values.app.port }}
           protocol: TCP
+        # Mount the configuration file into the docker container
         volumeMounts:
           - mountPath: /config/
             name: {{ .Chart.Name }}-uwsgi-config
@@ -42,10 +43,9 @@ spec:
             name: {{ .Chart.Name }}-nginx-config
 {{ end }}
         envFrom:
-          # Load the data from configMap into the runtime environment
-          # This allows us to use os.environ["KEY"] to look up variables
           - configMapRef:
               name: {{ .Chart.Name }}-config
+      # Specify volumes
       volumes:
         - name: {{ .Chart.Name }}-nginx-config
           configMap:

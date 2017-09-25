@@ -18,6 +18,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-nginx-config
 data:
+  # desired name for the file
   nginx.conf: {{ include "nginx-config" . | quote }}
 
 ---
