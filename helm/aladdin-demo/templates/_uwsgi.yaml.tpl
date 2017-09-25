@@ -4,6 +4,7 @@
 # one loaded will be used.
 {{ define "uwsgi-config" -}}
 uwsgi:
+  master: true
   http: : {{ .Values.app.port }}
   wsgi-file: run.py
   callable: app

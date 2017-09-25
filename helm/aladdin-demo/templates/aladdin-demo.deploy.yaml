@@ -15,10 +15,10 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
       containers:
-      # aladdin-demo falcon app
-      - name: aladdin-demo
-        image: aladdin-demo:local
-        workingDir: /home/aladdin-demo 
+      # falcon app container
+      - name: {{ .Chart.Name }}
+        image: {{ .Chart.Name }}:local
+        workingDir: /home/{{ .Chart.Name}} 
         ports:
         - containerPort: {{ .Values.app.port }}
           protocol: TCP

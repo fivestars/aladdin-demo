@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata: 
-  name: aladdin-demo
+  name: {{ .Chart.Name }}
   labels:
-    name: aladdin-demo
-    app: aladdin-demo
+    name: {{ .Chart.Name }}
+    app: {{ .Chart.Name }}
 spec:
   type: NodePort
   ports:
     - name: http
-    # Expose the nginx port if we are using it, otherwise expose the tornado app port
+    # Expose the nginx port if we are using it, otherwise expose the uwsgi port
 {{ if .Values.app.nginx.useNginx }}
       port: {{ .Values.app.nginx.port }}
 {{ else }}
       port: {{ .Values.app.port }}
 {{ end }}
   selector:
-    deploymentconfig: aladdin-demo
+    deploymentconfig: {{ .Chart.Name }}
