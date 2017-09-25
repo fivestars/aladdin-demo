@@ -30,7 +30,7 @@ spec:
           # Load the data from configMap into the runtime environment
           # This allows us to use os.environ["KEY"] to look up variables
           - configMapRef:
-              name: {{ .Chart.Name }}-config
+              name: {{ .Chart.Name }}
 {{ if .Values.app.nginx.use }}
       # nginx container
       - name: {{ .Chart.Name }}-nginx
@@ -44,7 +44,7 @@ spec:
 {{ end }}
         envFrom:
           - configMapRef:
-              name: {{ .Chart.Name }}-config
+              name: {{ .Chart.Name }}
       # Specify volumes
       volumes:
         - name: {{ .Chart.Name }}-nginx-config

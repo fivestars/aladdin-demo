@@ -1,10 +1,10 @@
 apiVerson: v1
 kind: ConfigMap
 metadata: 
-  name: {{ .Chart.Name }}-config
+  name: {{ .Chart.Name }}
   labels:
     project: {{ .Chart.Name }}
-    name: {{ .Chart.Name }}-config
+    name: {{ .Chart.Name }}
     app: {{ .Chart.Name }}
 # Create key - value entries in the data map that other files can look up
 data:
