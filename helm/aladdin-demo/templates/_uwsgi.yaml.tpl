@@ -4,9 +4,10 @@
 # one loaded will be used.
 {{ define "uwsgi-config" -}}
 uwsgi:
+  uid: aladdin-user
+  gid: aladdin-user
   master: true
   http: : {{ .Values.app.port }}
   wsgi-file: run.py
   callable: app
-
 {{ end }}

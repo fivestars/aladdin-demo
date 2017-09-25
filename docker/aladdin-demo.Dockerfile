@@ -29,5 +29,12 @@ WORKDIR /home/aladdin-demo
 # copy over the directory into docker container with given path
 COPY . /home/aladdin-demo
 
+# Create unprivileged user account
+RUN addgroup aladdin-user && \
+    adduser -SD -G aladdin-user aladdin-user
+
+# Switch to the unpriveleged user account
+USER aladdin-user
+
 # run the application with uwsgi once the container has been created
 ENTRYPOINT ["uwsgi", "--yaml", "/config/uwsgi.yaml"]
