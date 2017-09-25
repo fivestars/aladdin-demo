@@ -83,15 +83,15 @@ We demonstrate running an nginx container within the same pod as the aladdin-dem
       # default to the python app port
       port: 7892
       nginx:
-        useNginx: false
+        use: false
         port: 8001
-Change the `useNginx` field to `true`. This is all you need to do to see nginx work, you can verify this by restarting the app with `aladdin restart`. Navigate to the aladdin-demo service pod in the Kubernetes dashboard and you should be able to see two containers running. Read on for how we did it. 
+Change the `use` field to `true`. This is all you need to do to see nginx work, you can verify this by restarting the app with `aladdin restart`. Navigate to the aladdin-demo service pod in the Kubernetes dashboard and you should be able to see two containers running. Read on for how we did it. 
 
 Since we are just using the `nginx:1.12-alpine` image without modifications, there is no need to create a separate Dockerfile for it. 
 
 We add the nginx configuration files using the templating method described in the [Configuration Files](#configuration-files) section. We then add another container for nginx in [aladdin-demo.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo.deploy.yaml).
 
-    {{ if .Values.app.nginx.useNginx }}
+    {{ if .Values.app.nginx.use }}
           # nginx container
           - name: {{ .Chart.Name }}-nginx
             image: nginx:1.12-alpine

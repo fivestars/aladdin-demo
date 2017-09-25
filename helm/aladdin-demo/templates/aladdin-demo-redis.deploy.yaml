@@ -1,4 +1,4 @@
-{{if .Values.redis.createRedis }}
+{{if .Values.redis.create }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:

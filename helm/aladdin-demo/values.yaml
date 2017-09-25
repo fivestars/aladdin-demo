@@ -3,14 +3,15 @@ app:
   # default to the python app port
   port: 7892
   nginx:
-    useNginx: true
+    use: true
     port: 8001
 
 deploy:
+  # number of seconds for the containers to perform a graceful shutdown, after which it is voilently terminated
   terminationGracePeriod: 50
   replicas: 1
 
 redis:
-  createRedis: true
+  create: true
   port: 6379
   containerPort: 6379

@@ -3,24 +3,22 @@ FROM alpine:latest
 # install python and pip with apk package manager
 RUN apk -Uuv add python py-pip
 
-# copies requirements.txt to the docker container
-ADD requirements.txt requirements.txt
-
 # uwsgi in particular requires a lot of packages to install, delete them afterwards
-RUN `# Packages`\
-    apk add --no-cache \
+RUN apk add --no-cache \
         gettext \
         python3 \
         build-base \
         linux-headers \
-        python3-dev \
-    && \
-    \
-    `# Python requirements` \
-    pip3 install --no-cache-dir -r requirements.txt && \
-    \
-    `# Cleanup` \
-    apk del \
+        python3-dev
+
+# copies requirements.txt to the docker container
+ADD requirements.txt requirements.txt
+
+# Install requirements
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# clean up environment by deleting extra packages
+RUN apk del \
         build-base \
         linux-headers \
         python3-dev

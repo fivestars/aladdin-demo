@@ -6,11 +6,11 @@ metadata:
     name: {{ .Chart.Name }}
     app: {{ .Chart.Name }}
 spec:
-  type: NodePort
+  type: {{ .Values.service.publicServiceType }}
   ports:
     - name: http
     # Expose the nginx port if we are using it, otherwise expose the uwsgi port
-{{ if .Values.app.nginx.useNginx }}
+{{ if .Values.app.nginx.use }}
       port: {{ .Values.app.nginx.port }}
 {{ else }}
       port: {{ .Values.app.port }}

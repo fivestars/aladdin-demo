@@ -31,7 +31,7 @@ spec:
           # This allows us to use os.environ["KEY"] to look up variables
           - configMapRef:
               name: {{ .Chart.Name }}-config
-{{ if .Values.app.nginx.useNginx }}
+{{ if .Values.app.nginx.use }}
       # nginx container
       - name: {{ .Chart.Name }}-nginx
         image: nginx:1.12-alpine
