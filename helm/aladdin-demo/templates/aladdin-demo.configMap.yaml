@@ -7,6 +7,7 @@ metadata:
     name: {{ .Chart.Name }}
     app: {{ .Chart.Name }}
 # Create key - value entries in the data map that other files can look up
+# Load them into the environment by using configMapRef in the deploy.yaml file
 data:
   REDIS_HOST: {{ .Chart.Name }}-redis
   REDIS_PORT: {{ .Values.redis.port | quote }}

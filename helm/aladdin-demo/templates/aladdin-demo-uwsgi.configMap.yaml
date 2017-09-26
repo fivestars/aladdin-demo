@@ -4,4 +4,6 @@ kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-uwsgi
 data:
+  # Make the key the desired name for the file
+  # When mounted, this will create a uwsgi.yaml file with the contents in uwsgi-config template
   uwsgi.yaml: {{ include "uwsgi-config" . | quote }}

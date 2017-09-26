@@ -7,6 +7,8 @@ metadata:
     name: {{ .Chart.Name }}-redis
     app: {{ .Chart.Name }}-redis
 spec:
+  # No service type is specified here because the default is ClusterIP
+  # This is cluster-internal, so it is only reachable from within the cluster, a private service
   ports:
   - port: {{ .Values.redis.port }}
     targetPort: {{ .Values.redis.containerPort }}

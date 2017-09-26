@@ -6,6 +6,9 @@ metadata:
     name: {{ .Chart.Name }}
     app: {{ .Chart.Name }}
 spec:
+  # Aladdin will fill this in as NodePort which will expose itself to things outside of the cluster
+  # This is to highlight difference between public and private service types, and to only use
+  # public service types when it truly should be public
   type: {{ .Values.service.publicServiceType }}
   ports:
     - name: http
@@ -16,4 +19,5 @@ spec:
       port: {{ .Values.app.port }}
 {{ end }}
   selector:
+    # Get the aladdin-demo deployment configuration from aladdin-demo.deploy.yaml
     deploymentconfig: {{ .Chart.Name }}

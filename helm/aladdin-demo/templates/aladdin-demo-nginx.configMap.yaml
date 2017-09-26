@@ -4,5 +4,6 @@ kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-nginx
 data:
-  # desired name for the file
+  # Make the key the desired name for the file
+  # When mounted, this will create a nginx.conf file with the contents in nginx-config template
   nginx.conf: {{ include "nginx-config" . | quote }}
