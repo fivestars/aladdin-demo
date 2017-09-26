@@ -1,4 +1,3 @@
-import os
 import falcon
 from redis_connection import redis_conn
 
@@ -10,12 +9,11 @@ class BaseResource(object):
 class RedisResource(object):
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
-        foo = redis_conn.get('msg')
-        resp.body = (foo)
+        msg = redis_conn.get('msg')
+        resp.body = (msg)
 
 app = falcon.API()
 
-app.add_route('/redis', RedisResource())
+if redis_conn:
+    app.add_route('/redis', RedisResource())
 app.add_route('/', BaseResource())
-
-

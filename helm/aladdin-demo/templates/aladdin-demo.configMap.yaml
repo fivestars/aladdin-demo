@@ -10,6 +10,7 @@ metadata:
 data:
   REDIS_HOST: {{ .Chart.Name }}-redis
   REDIS_PORT: {{ .Values.redis.port | quote }}
+  REDIS_CREATE: {{ .Values.redis.create | quote }}
 
 ---
 # ConfigMap for nginx
