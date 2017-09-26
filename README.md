@@ -106,3 +106,60 @@ We add the nginx configuration files using the templating method described in th
 In the [aladdin-demo.service.yaml](helm/aladdin-demo/templates/aladdin-demo.service.yaml), we expose the nginx port for the pod so that all incoming requests get routed to nginx first. 
 
 ## Using Redis
+We demonstrate running a second pod with a redis container and having the aladdin-demo app retreive data from it upon request. Our template creates a redis server, then creates a connection to it in the falcon app using the redis-py client. Similar to the nginx example, we specify redis values in [values.yaml](helm/aladdin-demo/values.yaml).
+
+    redis:
+      create: false
+      port: 6379
+      containerPort: 6379
+      
+Changing the `create` field to `true` and restarting the app with `aladdin restart` will show you redis at work. **TODO** Currently redis startup takes about 130 seconds, so wait a bit and then verify that redis is working by curling the redis endpoint of the app. 
+    
+    $ curl $(minikube service --url aladdin-demo)/redis 
+    
+This should return `I can show you the world from Redis`. In the Kubernetes dashboard, you should also see two pods, one named `aladdin-demo` and the other named `aladdin-demo-redis`. We will detail how everything fits together below. 
+
+We are using the `redis:2.8` image with no modifications, so a Dockerfile is not needed. Eventually our python app will be needing information about redis, so we can store this information as key-value pairs the [configMap](helm/aladdin-demo/templates/aladdin-demo.configMap.yaml).
+
+    data:
+      REDIS_HOST: {{ .Chart.Name }}-redis
+      REDIS_PORT: {{ .Values.redis.port | quote }}
+      REDIS_CREATE: {{ .Values.redis.create | quote }}
+
+In [aladdin-demo.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo.deploy.yaml), we load the data from the [configMap](helm/aladdin-demo/templates/aladdin-demo.configMap.yaml) as environment variables. This allows the python app to access the redis information through `os.environ["KEY"]`, as we will see later. 
+
+    envFrom:
+      - configMapRef:
+          name: {{ .Chart.Name }}
+
+Since we are putting redis in its own pod, it needs its own deployment and service objects. Following our naming convention for helm charts, we create [aladdin-demo-redis.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo-redis.deploy.yaml) and [aladdin-demo-redis.service.yaml](helm/aladdin-demo/templates/aladdin-demo-redis.service.yaml).
+
+With these files, the redis pod will successfully deploy in Kubernetes. Now we just need to connect it with the python app. We create a simple connection in [redis_connection.py](redis_connection.py) called `redis_conn`, and populate it with a simple message. 
+
+    import redis
+    import os
+
+    redis_conn = None
+    if os.environ["REDIS_CREATE"] == "true":
+        redis_conn = redis.StrictRedis(
+                    host=os.environ["REDIS_HOST"],
+                    port=os.environ["REDIS_PORT"],
+                )
+        redis_conn.set('msg', '\n I can show you the world from Redis \n \n')
+        
+In [run.py](run.py), we define a redis resource and add it to the falcon api.
+
+    import falcon
+    from redis_connection import redis_conn
+    
+    class RedisResource(object):
+        def on_get(self, req, resp):
+            resp.status = falcon.HTTP_200
+            msg = redis_conn.get('msg')
+            resp.body = (msg)
+
+    app = falcon.API()
+
+    if redis_conn:
+        app.add_route('/redis', RedisResource())
+Done!
