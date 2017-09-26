@@ -41,7 +41,7 @@ It is highly recommended that you take a look at the official [Helm Chart Templa
 ### Configuration Files
 All values should be stored in a values.yaml file. The templates should always reference values using helm variables. Configuration files for non-kubernetes objects, such as an nginx config file or a uwsgi config file, should be located in the template folder with a name that begins with an underscore and ends with ".tpl". 
 
-For example, below is the `_nginx.conf.tpl` file located under the templates folder in the aladdin demo folder in the helm directory. 
+For example, below is the [\_nginx.conf.tpl](helm/aladdin-demo/templates/_nginx.conf.tpl) file. 
 
     {{/* Config file for nginx */}}
     {{ define "nginx-config" -}}
@@ -57,9 +57,10 @@ For example, below is the `_nginx.conf.tpl` file located under the templates fol
         }
     }
     {{ end }}   
+
 This creates a named template that we can reference elsewhere with the give name `nginx-config`. If you want to know more about how this works, check out [this section](https://docs.helm.sh/chart_template_guide/#declaring-and-using-templates-with-define-and-template) in the Helm Chart Template Guide.
 
-In order to keep files modularized, **TODO fix wording** we create a ConfigMap.
+In order to keep files modularized, we create a ConfigMap, the example below is [aladdin-demo-nginx.configMap.yaml](helm/aladdin-demo/templates/aladdin-demo-nginx.configMap.yaml).
 
     apiVersion: v1
     kind: ConfigMap
@@ -69,12 +70,13 @@ In order to keep files modularized, **TODO fix wording** we create a ConfigMap.
       # desired name for the file
       nginx.conf: {{ include "nginx-config" . | quote }}
 
-Under data, we can load the config file under its desired name, and we can attach the chart name. This file can then be mounted in the deploy template for our app, giving the docker container access to it.
+Under data, we can load the config file under its desired name, and we can attach the chart name. This file can then be mounted in the deploy template for our app, [aladdin-demo.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo.deploy.yaml), giving the docker container access to it.
 
     volumeMounts:
       - mountPath: /etc/nginx/
         name: {{ .Chart.Name }}-nginx
- This will put /etc/nginx/nginx.conf into the docker container.
+
+This will put /etc/nginx/nginx.conf into the docker container with that absolute path, equivalent to copying over a local nginx.conf file in a Dockerfile. 
 
 ## Using NGINX
 We demonstrate running an nginx container within the same pod as the aladdin-demo app. Our template sets up nginx as a simple proxy server that will listen to all traffic on a port and forward it to the falcon app. We specify the nginx values in the [values.yaml](helm/aladdin-demo/values.yaml) file.
