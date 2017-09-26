@@ -11,22 +11,3 @@ data:
   REDIS_HOST: {{ .Chart.Name }}-redis
   REDIS_PORT: {{ .Values.redis.port | quote }}
   REDIS_CREATE: {{ .Values.redis.create | quote }}
-
----
-# ConfigMap for nginx
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Chart.Name }}-nginx-config
-data:
-  # desired name for the file
-  nginx.conf: {{ include "nginx-config" . | quote }}
-
----
-# ConfigMap for uwsgi
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Chart.Name }}-uwsgi-config
-data:
-  uwsgi.yaml: {{ include "uwsgi-config" . | quote }}

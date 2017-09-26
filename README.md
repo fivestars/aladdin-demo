@@ -64,7 +64,7 @@ In order to keep files modularized, **TODO fix wording** we create a ConfigMap.
     apiVersion: v1
     kind: ConfigMap
     metadata:
-      name: {{ .Chart.Name }}-nginx-config
+      name: {{ .Chart.Name }}-nginx
     data:
       # desired name for the file
       nginx.conf: {{ include "nginx-config" . | quote }}
@@ -73,7 +73,7 @@ Under data, we can load the config file under its desired name, and we can attac
 
     volumeMounts:
       - mountPath: /etc/nginx/
-        name: {{ .Chart.Name }}-nginx-config
+        name: {{ .Chart.Name }}-nginx
  This will put /etc/nginx/nginx.conf into the docker container.
 
 ## Using NGINX
@@ -100,7 +100,7 @@ We add the nginx configuration files using the templating method described in th
                 protocol: TCP
             volumeMounts:
               - mountPath: /etc/nginx/
-                name: {{ .Chart.Name }}-nginx-config
+                name: {{ .Chart.Name }}-nginx
     {{ end }}
 
 In the [aladdin-demo.service.yaml](helm/aladdin-demo/templates/aladdin-demo.service.yaml), we expose the nginx port for the pod so that all incoming requests get routed to nginx first. 

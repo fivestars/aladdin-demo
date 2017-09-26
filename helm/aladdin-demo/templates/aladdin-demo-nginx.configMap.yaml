@@ -1,0 +1,8 @@
+# ConfigMap for nginx
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-nginx
+data:
+  # desired name for the file
+  nginx.conf: {{ include "nginx-config" . | quote }}

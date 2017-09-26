@@ -1,0 +1,7 @@
+# ConfigMap for uwsgi
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-uwsgi
+data:
+  uwsgi.yaml: {{ include "uwsgi-config" . | quote }}
