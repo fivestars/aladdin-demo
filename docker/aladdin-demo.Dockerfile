@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.6
 
 # install python and pip with apk package manager
 RUN apk -Uuv add python py-pip
@@ -27,7 +27,7 @@ RUN apk del \
 WORKDIR /home/aladdin-demo
 
 # copy over the directory into docker container with given path
-COPY . /home/aladdin-demo
+COPY app /home/aladdin-demo
 
 # Create unprivileged user account
 RUN addgroup aladdin-user && \
