@@ -3,7 +3,10 @@ kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
   labels:
+    project: {{ .Chart.Name }}
     name: {{ .Chart.Name }}
+    app: {{ .Chart.Name }}
+    githash: {{.Values.deploy.imageTag}}
 spec:
   replicas: {{.Values.deploy.replicas}}
   strategy:
@@ -11,8 +14,10 @@ spec:
   template:
     metadata:
       labels:
-        # this deploymentconfig label is used by the service to find the right deploy file
-        deploymentconfig: {{ .Chart.Name }}
+        project: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}
+        app: {{ .Chart.Name }}
+        githash: {{.Values.deploy.imageTag}}
     spec:
       # Number of seconds for the containers to perform a graceful shutdown,
       # after which it is voilently terminated. This defaults to 30s, most apps may not need to change it
@@ -22,7 +27,7 @@ spec:
       # falcon app container that runs with uwsgi server
       - name: {{ .Chart.Name }}
         # Docker image for this container
-        image: {{ .Chart.Name }}:local
+        image: {{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
         workingDir: /home/{{ .Chart.Name}} 
         # Container port that is being exposed within the node
         ports:

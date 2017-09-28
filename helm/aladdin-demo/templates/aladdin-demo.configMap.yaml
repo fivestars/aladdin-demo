@@ -4,8 +4,9 @@ metadata:
   name: {{ .Chart.Name }}
   labels:
     project: {{ .Chart.Name }}
-    name: {{ .Chart.Name }}
     app: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}
+    githash: {{ .Values.deploy.imageTag }}
 # Create key - value entries in the data map that other files can look up
 # Load them into the environment by using configMapRef in the deploy.yaml file
 data:

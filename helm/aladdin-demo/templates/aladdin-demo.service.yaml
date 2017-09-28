@@ -3,13 +3,15 @@ kind: Service
 metadata: 
   name: {{ .Chart.Name }}
   labels:
+    project: {{ .Chart.Name }}
     name: {{ .Chart.Name }}
     app: {{ .Chart.Name }}
+    githash: {{ .Values.deploy.imageTag }}
 spec:
   # Aladdin will fill this in as NodePort which will expose itself to things outside of the cluster
   # This is to highlight difference between public and private service types, and to only use
   # public service types when it truly should be public
-  type: {{ .Values.service.publicServiceType }}
+  type: {{ .Values.service.publicServiceType | quote }}
   ports:
     - name: http
     # Expose the nginx port if we are using it, otherwise expose the uwsgi port
@@ -20,4 +22,4 @@ spec:
 {{ end }}
   selector:
     # Get the aladdin-demo deployment configuration from aladdin-demo.deploy.yaml
-    deploymentconfig: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}

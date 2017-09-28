@@ -4,15 +4,19 @@ kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-redis
   labels:
+    project: {{ .Chart.Name }}
     name: {{ .Chart.Name }}-redis
     app: {{ .Chart.Name }}-redis
+    githash: {{ .Values.deploy.imageTag }}
 spec:
   replicas: 1
   template:
     metadata:
       labels:
+        project: {{ .Chart.Name }}
         name: {{ .Chart.Name }}-redis
         app: {{ .Chart.Name }}-redis
+        githash: {{ .Values.deploy.imageTag }}
     spec:
       containers:
       - name: {{ .Chart.Name }}-redis
