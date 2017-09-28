@@ -22,12 +22,15 @@ spec:
       # Number of seconds for the containers to perform a graceful shutdown,
       # after which it is voilently terminated. This defaults to 30s, most apps may not need to change it
       terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
+      # This is needed when pulling from our ecr repo
+      imagePullSecrets:
+        - name: aws
       containers:
 ############# aladdin-demo app container #################
       # falcon app container that runs with uwsgi server
       - name: {{ .Chart.Name }}
         # Docker image for this container
-        image: {{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
+        image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
         workingDir: /home/{{ .Chart.Name}} 
         # Container port that is being exposed within the node
         ports:
