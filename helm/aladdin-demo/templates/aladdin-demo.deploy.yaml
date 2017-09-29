@@ -1,0 +1,72 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    project: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}
+    app: {{ .Chart.Name }}
+    githash: {{.Values.deploy.imageTag}}
+spec:
+  replicas: {{.Values.deploy.replicas}}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        project: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}
+        app: {{ .Chart.Name }}
+        githash: {{.Values.deploy.imageTag}}
+    spec:
+      # Number of seconds for the containers to perform a graceful shutdown,
+      # after which it is voilently terminated. This defaults to 30s, most apps may not need to change it
+      terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
+      # This is needed when pulling from our ecr repo
+      imagePullSecrets:
+        - name: aws
+      containers:
+############# aladdin-demo app container #################
+      # falcon app container that runs with uwsgi server
+      - name: {{ .Chart.Name }}
+        # Docker image for this container
+        image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
+        workingDir: /home/{{ .Chart.Name}} 
+        # Container port that is being exposed within the node
+        ports:
+        - containerPort: {{ .Values.app.port }}
+          protocol: TCP
+        # Mount the configuration file into the docker container
+        volumeMounts:
+          # Absolute path is used here
+          - mountPath: /config/
+            name: {{ .Chart.Name }}-uwsgi
+        envFrom:
+          # Load the data from configMap into the runtime environment
+          # This allows us to use os.environ["KEY"] to look up variables
+          - configMapRef:
+              name: {{ .Chart.Name }}
+############# nginx server container #################
+{{ if .Values.app.nginx.use }}
+      # nginx container, only gets created if the app.nginx.use field is true in values.yaml
+      - name: {{ .Chart.Name }}-nginx
+        image: nginx:1.12-alpine
+        ports: 
+          - containerPort: {{ .Values.app.nginx.port }}
+            protocol: TCP
+        volumeMounts:
+          - mountPath: /etc/nginx/
+            name: {{ .Chart.Name }}-nginx
+{{ end }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Chart.Name }}
+############# end of containers #############
+      # Specify volumes that will be mounted in the containers
+      volumes:
+        - name: {{ .Chart.Name }}-nginx
+          configMap:
+            name: {{ .Chart.Name }}-nginx
+        - name: {{ .Chart.Name }}-uwsgi
+          configMap:
+            name: {{ .Chart.Name }}-uwsgi

@@ -1,0 +1,8 @@
+{
+    "name": "aladdin-demo",
+    "build_docker": "./build/build_docker.sh",
+    "helm_chart": "./helm/aladdin-demo",
+    "docker_images": [
+        "aladdin-demo"
+    ]
+}
