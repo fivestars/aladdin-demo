@@ -16,11 +16,16 @@ http {
     server {
     listen {{ .Values.app.nginx.port }};
         
-        # Match incoming request uri with "/" and forward them to the uwsgi app
-        # All requests will match in this case
-        location / {
+        # Match incoming request uri with "/app" and forward them to the uwsgi app
+        location /app {
             proxy_pass http://localhost:{{ .Values.app.port}};
         }
+        # Otherwise, nginx tries to serve static content. The only file should exist is index.html,
+        # which is written by the initContainer. Get requests with "/" or "/index.html" will return
+        # a short message, everything else will return 404
+        location / {
+            root /usr/share/nginx/html;
+            index index.html;
     }
 }
 
