@@ -60,10 +60,13 @@ spec:
         volumeMounts:
           - mountPath: /etc/nginx/
             name: {{ .Chart.Name }}-nginx
-{{ end }}
+          # mount html that should contain an index.html file written by the init container
+          - mountPath: /usr/share/nginx/html
+            name: workdir
         envFrom:
           - configMapRef:
               name: {{ .Chart.Name }}
+{{ end }}
 ############# init container ################
 ## initContainers must run and successfully exit before the pod can start. If it fails, K8s
 ## will restart the initContainers until it is successful. 

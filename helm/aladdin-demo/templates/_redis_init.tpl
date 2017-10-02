@@ -17,7 +17,7 @@
   image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
   command:
   - 'python3'
-  - 'redis_utils/redis_populate.py'
+  - 'redis_util/redis_populate.py'
   envFrom:
     - configMapRef:
         name: {{ .Chart.Name }}

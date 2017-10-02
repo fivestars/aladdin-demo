@@ -1,5 +1,5 @@
 import falcon
-from redis_utils.redis_connection import redis_conn
+from redis_util.redis_connection import redis_conn
 
 class BaseResource(object):
     def on_get(self, req, resp):

@@ -26,6 +26,7 @@ http {
         location / {
             root /usr/share/nginx/html;
             index index.html;
+        }
     }
 }
 
