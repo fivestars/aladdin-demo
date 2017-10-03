@@ -263,3 +263,43 @@ Then, in [aladdin-demo.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo.dep
     {{ include "redis_populate" . | indent 6 }}
 
 These initContainers will run before the pod starts. 
+
+## Project Specific Commands
+[Confluence page](https://fivestars.atlassian.net/wiki/spaces/DEV/pages/49257521/Project+Specific+Commands+Architecture)
+We can run project-specific commands through aladdin by creating a dedicated pod for managing the execution of commands. The architecture and design are highlighted in the confluence page above.
+
+We will demonstrate by implementing a simple `status` command for aladdin-demo, which simply does a dns lookup for the aladdin-demo pod and the redis pod, and prints out their status. You can execute this command by running `$ aladdin cmd aladdin-demo status`.
+
+We start by creating [aladdin-demo-commands.Dockerfile](docker/aladdin-demo-commands.Dockerfile), which inherits from the `commands_base` image from aladdin.
+
+    FROM 281649891004.dkr.ecr.us-east-1.amazonaws.com/aladdin:commands_base
+    COPY commands_app/requirements.txt ./requirements.txt
+    RUN pip install -r requirements.txt
+    COPY commands_app/commands commands
+    
+We then add the following line to the [build_docker.sh](build/build_docker.sh) script.
+
+    #aws login because we are pulling from ecr for base image
+    $(aws --profile sandbox ecr get-login)
+    docker_build "aladdin-demo-commands" "docker/aladdin-demo-commands.Dockerfile" "."
+    
+The code for the commands should live in [commands](commands_app/commands/) under a commands_app directory, and each command needs to have a separate file with the same name as the command. For example, we are writing a `status` command, so we create [status.py](commands_app/commands/status.py). 
+
+In each command file, in addition to a function that actually executes the command, a `parse_args` function must be defined in order for aladdin to find and execute the right command. Our status function simply does a dns lookup for the aladdin-demo pod and the redis pod, and prints out their status.
+
+    def parse_args(sub_parser):
+        subparser = sub_parser.add_parser("status", help="Report on the status of the application")
+        subparser.set_defaults(func=print_status)
+
+    def print_status(arg):
+    """ Prints the status of the aladdin-demo pod and the redis pod """
+    if socket.gethostbyname("aladdin-demo"):
+        print("Aladdin demo app up and ready")
+    else:
+        print("Cannot find aladdin demo app, possible errors may have occurred")
+    if socket.gethostbyname("aladdin-demo-redis"):
+        print("Redis server up and ready")
+    else: 
+        print("Cannot find redis server")
+        
+Finally, a deployment must be added, which will give the specifications for creating the commands pod. See [aladdin-demo-commands.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo-commands.deploy.yaml) for our example.
