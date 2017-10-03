@@ -46,6 +46,9 @@ spec:
           # This allows us to use os.environ["KEY"] to look up variables
           - configMapRef:
               name: {{ .Chart.Name }}
+        resources:
+          requests:
+            cpu: 100m
 ############# nginx server container #################
 {{ if .Values.app.nginx.use }}
       # nginx container, only gets created if the app.nginx.use field is true in values.yaml
@@ -61,6 +64,9 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Chart.Name }}
+        resources:
+          requests:
+            cpu: 100m
 ############# end of containers #############
       # Specify volumes that will be mounted in the containers
       volumes:
