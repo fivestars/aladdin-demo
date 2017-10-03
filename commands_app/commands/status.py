@@ -13,4 +13,5 @@ def print_status(arg):
         print("Cannot find aladdin demo app, possible errors may have occurred")
     if socket.gethostbyname("aladdin-demo-redis"):
         print("Redis server up and ready")
-    else: print("Cannot find redis server")
+    else: 
+        print("Cannot find redis server")
