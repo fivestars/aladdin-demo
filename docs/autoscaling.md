@@ -1,4 +1,4 @@
-## Autoscaling
+# Autoscaling
 Kubernetes provides autoscaling by CPU usage through a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). We give a simple demonstration of it in this demo project.
 
 In order to enable autoscaling, the first step is to make sure that Heapster is enabled. We should have it deployed in all non-local environments, but if you are running this locally with minikube, you will need to manually enable it with
