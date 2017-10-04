@@ -101,7 +101,7 @@ Under data, we can load the config file under its desired name, and we can attac
 This will put /etc/nginx/nginx.conf into the docker container with that absolute path, equivalent to copying over a local nginx.conf file in a Dockerfile. 
 
 ## InitContainers
-InitContainers are generally lightweight containers that contain a few simple instructuions. The initContainers must run and successfully exit before the pod can start. If it fails, Kubernetes will keep trying to restart the initContainers until it is successful. You can have multiple initContainers, and they will simply execute one by one in the order they are defined. We will look at specifi examples of how we use initContainers with [nginx](#nginx-initcontainer) and [redis](#redis-initcontainer) in the secions below.
+InitContainers are generally lightweight containers that contain a few simple instructuions. The initContainers must run and successfully exit before a deployment's pods can start. If it fails, Kubernetes will keep trying to restart the initContainers until it is successful. You can have multiple initContainers, and they will simply execute one by one in the order they are defined. We will look at specific examples of how we use initContainers with [nginx](#nginx-initcontainer) and [redis](#redis-initcontainer) in the secions below.
 
 ## Using NGINX
 We demonstrate running an nginx container within the same pod as the aladdin-demo app. Our template sets up nginx as a simple proxy server that will listen to all traffic on a port and forward it to the falcon app. We specify the nginx values in the [values.yaml](helm/aladdin-demo/values.yaml) file.
@@ -113,7 +113,7 @@ We demonstrate running an nginx container within the same pod as the aladdin-dem
         use: false
         port: 8001
         
-Set the `use` field to `true`. This is all you need to do to see nginx work, you can verify this by restarting the app with `aladdin restart`. Navigate to the aladdin-demo service pod in the Kubernetes dashboard and you should be able to see two containers running. Read on for how we did it. 
+Set the `use` field to `true`. This is all you need to do to see nginx work, you can verify this by restarting the app with `aladdin start`. Navigate to the aladdin-demo service pod in the Kubernetes dashboard and you should be able to see two containers running. Read on for how we did it. 
 
 Since we are just using the `nginx:1.12-alpine` image without modifications, there is no need to create a separate Dockerfile for it. 
 
