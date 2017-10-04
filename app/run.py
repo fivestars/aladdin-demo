@@ -1,6 +1,6 @@
 import falcon
-from redis_connection import redis_conn
 from math import sqrt
+from redis_util.redis_connection import redis_conn
 
 class BaseResource(object):
     def on_get(self, req, resp):
@@ -24,6 +24,6 @@ class busyResource(object):
 app = falcon.API()
 
 if redis_conn:
-    app.add_route('/redis', RedisResource())
-app.add_route('/', BaseResource())
-app.add_route('/busy', busyResource())
+    app.add_route('/app/redis', RedisResource())
+app.add_route('/app', BaseResource())
+app.add_route('/app/busy', busyResource())
