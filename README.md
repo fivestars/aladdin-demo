@@ -302,9 +302,9 @@ Next, we create the HorizontalPodAutoscaler object in [aladdin-demo.hpa.yaml](he
 
 If the cpu utilization percentage of a pod exceeds 50%, the autoscaler will spin up new pods until each pod has a below 50% cpu utilization. This utilization percentage is quite low for purposes of demonstration. By default, autoscaler will check on the pods every 30 seconds. This can be changed through the controller manager's `--horizontal-pod-autoscaler-sync-period` flag.
 
-We also add a `busyResource` in [run.py](app/run.py), which performs a CPU intensive operation upon get request to force autoscaling.
+We also add a `BusyResource` in [run.py](app/run.py), which performs a CPU intensive operation upon get request to force autoscaling.
 
-    class busyResource(object):
+    class BusyResource(object):
         def on_get(self, req, resp):
             n = 0.0001
             for i in range(1000000):
@@ -312,7 +312,7 @@ We also add a `busyResource` in [run.py](app/run.py), which performs a CPU inten
             resp.body = ('busy busy...')
 
     app = falcon.API()
-    app.add_route('app/busy', busyResource())
+    app.add_route('app/busy', BusyResource())
 
 Confirm that the aladdin-demo app is running. Then check the status of the autoscaler and the current number of pods with
 
