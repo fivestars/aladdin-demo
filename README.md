@@ -312,7 +312,7 @@ We also add a `busyResource` in [run.py](app/run.py), which performs a CPU inten
             resp.body = ('busy busy...')
 
     app = falcon.API()
-    app.add_route('/busy', busyResource())
+    app.add_route('app/busy', busyResource())
 
 Confirm that the aladdin-demo app is running. Then check the status of the autoscaler and the current number of pods with
 
@@ -338,7 +338,7 @@ Then, in a new terminal window, run
 
     Hit enter for command prompt
 
-    $ while true; do wget -q -O- <url from previous step>/busy; done
+    $ while true; do wget -q -O- <url from previous step>/app/busy; done
 
 This should return `busy busy...` ad infinitum. Let it run for about half a minute, since the autoscaler only checks on the pod every 30 seconds, and then look at the status of the autoscaler and pods again.
 
