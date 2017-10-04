@@ -47,6 +47,9 @@ spec:
           # This allows us to use os.environ["KEY"] to look up variables
           - configMapRef:
               name: {{ .Chart.Name }}
+        resources:
+          requests:
+            cpu: 100m
 ############# nginx server container ########
 ## This is a container for an nginx server
 #############################################
@@ -66,6 +69,9 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Chart.Name }}
+        resources:
+          requests:
+            cpu: 100m
 {{ end }}
 ############# init container ################
 ## initContainers must run and successfully exit before the pod can start. If it fails, K8s
