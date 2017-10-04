@@ -17,7 +17,6 @@ spec:
         project: {{ .Chart.Name }}
         name: {{ .Chart.Name }}
         app: {{ .Chart.Name }}
-        githash: {{.Values.deploy.imageTag}}
     spec:
       # Number of seconds for the containers to perform a graceful shutdown,
       # after which it is voilently terminated. This defaults to 30s, most apps may not need to change it
