@@ -17,7 +17,6 @@ spec:
         project: {{ .Chart.Name }}
         name: {{ .Chart.Name }}-commands
         app: {{ .Chart.Name }}-commands
-        githash: {{.Values.deploy.imageTag}}
     spec:
       imagePullSecrets:
         - name: aws
