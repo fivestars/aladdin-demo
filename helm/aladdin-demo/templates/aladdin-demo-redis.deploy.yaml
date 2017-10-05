@@ -16,7 +16,6 @@ spec:
         project: {{ .Chart.Name }}
         name: {{ .Chart.Name }}-redis
         app: {{ .Chart.Name }}-redis
-        githash: {{ .Values.deploy.imageTag }}
     spec:
       containers:
       - name: {{ .Chart.Name }}-redis
