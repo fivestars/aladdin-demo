@@ -24,8 +24,8 @@ docker_build() {
 }
 cd "$PROJ_ROOT"
 
-docker_build "aladdin-demo" "docker/aladdin-demo.Dockerfile" "."
+docker_build "aladdin-demo" "app/docker/aladdin-demo.Dockerfile" "."
 
 #aws login because we are pulling from ecr for base image
 $(aws --profile sandbox ecr get-login)
-docker_build "aladdin-demo-commands" "docker/aladdin-demo-commands.Dockerfile" "."
+docker_build "aladdin-demo-commands" "app/docker/aladdin-demo-commands.Dockerfile" "."
