@@ -12,7 +12,7 @@ RUN apk add --no-cache \
         python3-dev
 
 # copies requirements.txt to the docker container
-ADD requirements.txt requirements.txt
+ADD app/requirements.txt requirements.txt
 
 # Install requirements
 RUN pip3 install --no-cache-dir -r requirements.txt

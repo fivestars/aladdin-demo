@@ -24,4 +24,4 @@ docker_build() {
 }
 cd "$PROJ_ROOT"
 
-docker_build "aladdin-demo" "docker/aladdin-demo.Dockerfile" "."
+docker_build "aladdin-demo" "app/docker/aladdin-demo.Dockerfile" "."
