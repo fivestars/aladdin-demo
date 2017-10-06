@@ -1,6 +1,8 @@
 import requests
 import os
 
+from redis_util.redis_connection import ping_redis
+
 def parse_args(sub_parser):
     subparser = sub_parser.add_parser("status", help="Report on the status of the application")
     # register the function to be executed when command "status" is called
@@ -8,6 +10,10 @@ def parse_args(sub_parser):
 
 def print_status(arg):
     """ Prints the status of the aladdin-demo pod and the redis pod """
+    print_aladdin_demo_status()
+    print_redis_status()
+
+def print_aladdin_demo_status():
     print("pinging aladdin-demo ...")
     host = os.environ["ALADDIN_DEMO_SERVICE_HOST"]
     port = os.environ["ALADDIN_DEMO_SERVICE_PORT"]
@@ -17,3 +23,11 @@ def print_status(arg):
         print("aladdin demo endpoint ready")
     else:
         print("aladdin demo endpoint returned with status code {}".format(r.status_code))
+
+def print_redis_status():
+    print("pinging redis ...")
+    try: 
+        status = ping_redis
+        print("redis connection ready")
+    except RedisError as e:
+        print("redis connection error: {}".format(e))

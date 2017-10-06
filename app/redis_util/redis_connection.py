@@ -8,3 +8,6 @@ if os.environ["REDIS_CREATE"] == "true":
                 host=os.environ["REDIS_HOST"],
                 port=os.environ["REDIS_PORT"],
             )
+
+def ping_redis():
+    return redis_conn.ping()
