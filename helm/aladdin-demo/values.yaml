@@ -12,6 +12,6 @@ deploy:
   replicas: 1
 
 redis:
-  create: true
+  create: false
   port: 6379
   containerPort: 6379
