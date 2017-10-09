@@ -19,11 +19,14 @@ def print_aladdin_demo_status():
     host = os.environ["ALADDIN_DEMO_SERVICE_HOST"]
     port = os.environ["ALADDIN_DEMO_SERVICE_PORT"]
     url = "http://{}:{}/ping".format(host, port)
-    r = requests.get(url)
-    if r.status_code == 200:
-        print("aladdin demo endpoint ready")
-    else:
-        print("aladdin demo endpoint returned with status code {}".format(r.status_code))
+    try: 
+        r = requests.get(url)
+        if r.status_code == 200:
+            print("aladdin demo endpoint ready")
+        else:
+            print("aladdin demo endpoint returned with status code {}".format(r.status_code))
+    except requests.exceptions.ConnectionError as e:
+        print("aladdin demo endpoint connection error: {}".format(e))
 
 def print_redis_status():
     # TODO have this ping external redis when that gets added
