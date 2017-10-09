@@ -22,9 +22,9 @@ def print_aladdin_demo_status():
     try: 
         r = requests.get(url)
         if r.status_code == 200:
-            print("aladdin demo endpoint ready")
+            print("aladdin demo endpoint ping successful")
         else:
-            print("aladdin demo endpoint returned with status code {}".format(r.status_code))
+            print("aladdin demo endpoint ping returned with status code {}".format(r.status_code))
     except requests.exceptions.ConnectionError as e:
         print("aladdin demo endpoint connection error: {}".format(e))
 
@@ -36,6 +36,6 @@ def print_redis_status():
         return
     try: 
         status = ping_redis()
-        print("redis connection ready {}".format(status))
+        print("redis connection ping successful {}".format(status))
     except RedisError as e:
         print("redis connection error: {}".format(e))
