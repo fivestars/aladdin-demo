@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}-elasticsearch
+  labels:
+    project: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}-elasticsearch
+    app: {{ .Chart.Name }}-elasticsearch
+    githash: {{.Values.deploy.imageTag}}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-elasticsearch
+  # The name of the service that governs this StatefulSet, must exist before the StatefulSet    
+  serviceName: {{ .Chart.Name }}-elasticsearch
+  replicas: 3 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-elasticsearch # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: {{ .Chart.Name }}-elasticsearch
+        image: #TODO
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: elasticsearch
+          mountPath: /elasticsearch
+  volumeClaimTemplates:
+  - metadata:
+      name: elasticsearch
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

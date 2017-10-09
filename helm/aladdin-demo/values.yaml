@@ -15,3 +15,7 @@ redis:
   create: true
   port: 6379
   containerPort: 6379
+
+elasticsearch:
+  create: true
+  port: 9200
