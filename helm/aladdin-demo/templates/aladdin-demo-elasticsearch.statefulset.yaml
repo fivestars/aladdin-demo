@@ -13,7 +13,7 @@ spec:
       app: {{ .Chart.Name }}-elasticsearch
   # The name of the service that governs this StatefulSet, must exist before the StatefulSet    
   serviceName: {{ .Chart.Name }}-elasticsearch
-  replicas: 3 # by default is 1
+  replicas: 1 # by default is 1
   template:
     metadata:
       labels:
@@ -22,15 +22,27 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: {{ .Chart.Name }}-elasticsearch
-        image: #TODO
+        # image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}-elasticsearch:{{.Values.deploy.imageTag}}
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.6.2
         ports:
-        - containerPort: 80
+        - containerPort: {{ .Values.elasticsearch.containerPort }}
         volumeMounts:
-        - name: elasticsearch
-          mountPath: /elasticsearch
+        - name: {{ .Chart.Name }}-elasticsearch
+          # Volume mounts will override the mountPath, which in this case has a lot of other useful
+          # things in it, we only want to mount elasticsearch.yml 
+          mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+          # Configmaps are lists of key-value pairs, and we only need one of the keys, so we
+          # specify that with a subpath 
+          subPath: elasticsearch.yml
+        - name: db
+          mountPath: /var/db/
+      volumes:
+        - name: {{ .Chart.Name }}-elasticsearch
+          configMap:
+            name: {{ .Chart.Name }}-elasticsearch
   volumeClaimTemplates:
   - metadata:
-      name: elasticsearch
+      name: db
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:

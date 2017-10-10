@@ -8,16 +8,9 @@ metadata:
     app: {{ .Chart.Name }}-elasticsearch
     githash: {{.Values.deploy.imageTag}}
 spec:
-{{ if .Values.elasticsearch.create }}
-  type: {{ .Values.service.privateServiceType | quote }}
+  clusterIP: None
   selector:
     name: {{ .Chart.Name }}-elasticsearch
   ports:
   - name: elasticsearch
-    protocol: TCP
     port: {{ .Values.elasticsearch.port }}
-    targetPort: elasticsearch
-{{ else }}
-  type: ExternalName
-  externalName: {{ .Values.elasticsearch.host }}
-{{ end }} # /elasticsearch.create
