@@ -20,6 +20,10 @@ http {
         location /app {
             proxy_pass http://localhost:{{ .Values.app.port}};
         }
+        # Match incoming request uri with "/ping" and forward them to the uwsgi app
+        location /ping {
+            proxy_pass http://localhost:{{ .Values.app.port}};
+        }
         # Otherwise, nginx tries to serve static content. The only file should exist is index.html,
         # which is written by the initContainer. Get requests with "/" or "/index.html" will return
         # a short message, everything else will return 404

@@ -21,9 +21,15 @@ class BusyResource(object):
             n += sqrt(n)
         resp.body = ('busy busy...')
 
+class PingResource(object):
+    def on_get(self, req,resp):
+        resp.status = falcon.HTTP_200
+        resp.body = ''
+
 app = falcon.API()
 
 if redis_conn:
     app.add_route('/app/redis', RedisResource())
 app.add_route('/app', BaseResource())
 app.add_route('/app/busy', BusyResource())
+app.add_route('/ping', PingResource())
