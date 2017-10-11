@@ -1,11 +1,8 @@
-import os
 from elasticsearch import Elasticsearch
 
-# es_conn = Elasticsearch(hosts=os.environ["ALADDIN_DEMO_ELASTICSEARCH_SERVICE_HOST"])
-es_conn = Elasticsearch()
-def test_connection():
+def test_connection(connection):
 
-    es_conn.index(index='posts', doc_type='blog', id=1, body={
+    connection.index(index='posts', doc_type='blog', id=1, body={
         'author': 'Santa Clause',
         'blog': 'Slave Based Shippers of the North',
         'title': 'Using Celery for distributing gift dispatch',
@@ -14,4 +11,6 @@ def test_connection():
         'awesomeness': 0.2
     })
 
-test_connection()
+es_conn = Elasticsearch(hosts="aladdin-demo-elasticsearch")
+
+test_connection(es_conn)

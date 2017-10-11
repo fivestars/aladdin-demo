@@ -1,4 +1,5 @@
 import falcon
+import json
 from math import sqrt
 from redis_util.redis_connection import redis_conn
 from elasticsearch_util.elasticsearch_connection import es_conn
@@ -28,10 +29,11 @@ class PingResource(object):
         resp.body = ''
 
 class ElasticsearchResource(object):
+
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
         data = es_conn.get(index='posts', doc_type='blog', id=1)
-        resp.body = data['_source']
+        resp.body = json.dumps(data['_source'])
 
 app = falcon.API()
 
