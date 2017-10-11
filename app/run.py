@@ -32,7 +32,7 @@ class ElasticsearchResource(object):
 
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
-        data = es_conn.get(index='posts', doc_type='blog', id=1)
+        data = es_conn.get(index='messages', doc_type='song', id=1)
         resp.body = json.dumps(data['_source'])
 
 app = falcon.API()
