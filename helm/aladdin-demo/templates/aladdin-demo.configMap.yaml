@@ -15,3 +15,4 @@ data:
   ELASTICSEARCH_POPULATE: {{ .Values.elasticsearch.populate | quote }}
   ELASTICSEARCH_HOST: {{ .Chart.Name }}-elasticsearch
   ELASTICSEARCH_PORT: {{ .Values.elasticsearch.port | quote }}
+  
