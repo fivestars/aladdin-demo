@@ -1,3 +1,4 @@
+{{ if .Values.elasticsearch.create }}
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
@@ -28,18 +29,19 @@ spec:
         securityContext:
           privileged: true
       # Change the owner of the mounted persistent volume let elasticsearch access it for data and logs
+      # 1000 is the uid of the first non-root user created, in our case that is the elasticsearch user
       # Ideally this can be done with spec.securityContext, which is commented out below, but it 
       # does not appear to work in minikube
       - name: volume-mount-hack
         image: busybox
-        command: ["sh", "-c", "chown -R 1000:100 /usr/share/elasticsearch/stateful"]
+        command: ["sh", "-c", "chown -R {{ .Values.elasticsearch.id }}:{{ .Values.elasticsearch.id }} /stateful"]
         volumeMounts:
         - name: storage
-          mountPath: /usr/share/elasticsearch/stateful
+          mountPath: /stateful
       terminationGracePeriodSeconds: 10
       containers:
       - name: {{ .Chart.Name }}-elasticsearch
-        image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}-elasticsearch:{{.Values.deploy.imageTag}}
+        image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}-elasticsearch:{{ .Values.deploy.imageTag }}
         ports:
         - containerPort: {{ .Values.elasticsearch.containerPort }}
         volumeMounts:
@@ -50,6 +52,8 @@ spec:
           # Configmaps are lists of key-value pairs, and we only need one of the keys, so we
           # specify that with a subpath 
           subPath: elasticsearch.yml
+        - name: storage
+          mountPath: /usr/share/elasticsearch/stateful
       volumes:
         - name: {{ .Chart.Name }}-elasticsearch
           configMap:
@@ -71,3 +75,4 @@ spec:
       resources:
         requests:
           storage: 1Gi
+{{ end }}

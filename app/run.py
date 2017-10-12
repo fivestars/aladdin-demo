@@ -39,7 +39,8 @@ app = falcon.API()
 
 if redis_conn:
     app.add_route('/app/redis', RedisResource())
+if es_conn:
+    app.add_route('/app/elasticsearch', ElasticsearchResource())
 app.add_route('/app', BaseResource())
 app.add_route('/app/busy', BusyResource())
-app.add_route('/app/elasticsearch', ElasticsearchResource())
 app.add_route('/ping', PingResource())
