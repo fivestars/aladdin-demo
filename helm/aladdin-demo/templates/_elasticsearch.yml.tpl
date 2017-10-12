@@ -12,9 +12,10 @@ xpack:
   watcher.enabled: false
 
 cluster.info.update.interval: "30m"
-# path:
-#   data: /data/data
-#   logs: /data/log
+
+path:
+  data: stateful/data
+  logs: stateful/log
 
 # This allows other pods in the kubernetes cluster to connect to elasticsearch
 network.host: 0.0.0.0

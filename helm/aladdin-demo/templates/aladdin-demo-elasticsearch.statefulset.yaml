@@ -42,16 +42,21 @@ spec:
           # specify that with a subpath 
           subPath: elasticsearch.yml
         - name: storage
-          mountPath: /data
+          mountPath: /usr/share/elasticsearch/stateful
       volumes:
         - name: {{ .Chart.Name }}-elasticsearch
           configMap:
             name: {{ .Chart.Name }}-elasticsearch
+      # We need to modify the security context for the pod so that the volumes mounted under the elasticsearch
+      # user instead of the default root user, allowing elasticsearch to access the persistent volume
+      securityContext: 
+        fsGroup: 1000
   volumeClaimTemplates:
   - metadata:
       name: storage
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: standard
       resources:
         requests:
           storage: 1Gi

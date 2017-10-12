@@ -18,5 +18,7 @@ redis:
 
 elasticsearch:
   create: true
+  populate: true
+  id: 1000
   port: 9200
   containerPort: 9200
