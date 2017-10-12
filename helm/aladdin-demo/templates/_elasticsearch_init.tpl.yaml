@@ -1,12 +1,11 @@
 {{ define "elasticsearch_check" -}}
 {{ if .Values.elasticsearch.create }}
 - name: {{ .Chart.Name }}-elasticsearch-check
-  image: busybox
+  image: byrnedo/alpine-curl
   command:
   - 'sh'
   - '-c'
-  - 'sleep 10'
-  # - 'until nslookup {{ .Chart.Name }}-elasticsearch; do echo waiting for elasticsearch pod; sleep 2; done;'
+  - 'until curl {{ .Chart.Name }}-elasticsearch:{{ .Values.elasticsearch.port }}; do echo waiting for elasticsearch pod; sleep 2; done;'
 {{ end }}
 {{ end }}
 
