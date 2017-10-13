@@ -29,11 +29,11 @@ class PingResource(object):
         resp.body = ''
 
 class ElasticsearchResource(object):
-
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
         data = es_conn.get(index='messages', doc_type='song', id=1)
-        resp.body = json.dumps(data['_source'])
+        msg = '\nData from ElasticSearch is {} \n \n'.format(json.dumps(data['_source']))
+        resp.body = msg
 
 app = falcon.API()
 

@@ -98,7 +98,9 @@ spec:
         # initContainers that check that elasticsearch container is up and running, populates it if it is
 {{ if .Values.elasticsearch.create }}
 {{ include "elasticsearch_check" . | indent 6 }}
+{{ if .Values.elasticsearch.populate }}
 {{ include "elasticsearch_populate" . | indent 6}}
+{{ end }} # /elasticsearch.populate
 {{ end }} # /elasticsearch.create
 ############# end of containers #############
       # Specify volumes that will be mounted in the containers

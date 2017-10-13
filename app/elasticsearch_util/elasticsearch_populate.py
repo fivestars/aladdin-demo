@@ -1,4 +1,3 @@
-import os
 from elasticsearch_connection import es_conn
 
 def populateData(connection):
@@ -11,6 +10,5 @@ def populateData(connection):
 
 
 if __name__ == "__main__":
-    if os.environ["ELASTICSEARCH_POPULATE"] == "true":
-        populateData(es_conn)
+    populateData(es_conn)
     

@@ -33,6 +33,7 @@ spec:
       # does not appear to work in minikube
       - name: volume-mount-hack
         image: busybox
+        imagePullPolicy: IfNotPresent
         command: ["sh", "-c", "chown -R {{ .Values.elasticsearch.id }}:{{ .Values.elasticsearch.id }} /stateful"]
         volumeMounts:
         - name: storage
@@ -40,7 +41,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: {{ .Chart.Name }}-elasticsearch
-        image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}-elasticsearch:{{ .Values.deploy.imageTag }}
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
         ports:
         - containerPort: {{ .Values.elasticsearch.containerPort }}
         volumeMounts:
@@ -61,7 +62,7 @@ spec:
       # user instead of the default root user, allowing elasticsearch to access the persistent volume
       # This does not currently work with minikube, hence the volume-mount-hack initContainer above
       # securityContext: 
-      #   fsGroup: 1000
+      #   fsGroup: {{ .Values.elasticsearch.id }}
   # Define the persistent volume claim, which will dynamically allocate a peristent volume that
   # satisfies this template
   volumeClaimTemplates:
