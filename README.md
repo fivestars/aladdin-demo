@@ -1,14 +1,14 @@
-Aladdin Installation
+# Aladdin Installation
 
 ## What is Aladdin
 
 **TODO:** Blurb
 
-## Initial Setup
+## Aladdin Setup
 
-This section describes how to get kubernetes setup and verify that it is working. This includes installing minikube, which is used for local development in kubernetes. 
+This section describes how to get Kubernetes setup and verify that it is working. This includes installing Minikube, which is used for local development in Kubernetes. 
 
-To set up, just clone the aladdin github repository to get started **TODO:** Confirm once we have public git repository
+To set up, just clone the Aladdin GitHub repository to get started **TODO:** Confirm once we have public git repository
 
     $ git clone git@github.com/aladdin/aladdin.git
     $ cd aladdin
@@ -17,16 +17,31 @@ To set up, just clone the aladdin github repository to get started **TODO:** Con
 The `infra_k8s_check.sh` script checks to see if everything necessary is installed in order to enable local development for various projects and to enable deploying to different environments. 
 - If you are missing any dependencies, the script will try and install them for you. 
 - This script is also run every time you run the ./aladdin.sh script (more about that script in the Installing our Projects section). 
-- __Important:__ Note that this tries to install specific versions of docker, virtual box, minikube, kubectl, and helm that are known to work with aladdin. If you do not want this script to override the version you already have, you will want to alter the versions in the scripts/infra_k8s_check.sh file. However, if you do this, we can not guarantee the behavior of aladdin. 
+- __Important:__ Note that this tries to install specific versions of Docker, Virtual Box, Minikube, Kubectl, and Helm that are known to work with Aladdin. If you do not want this script to override the version you already have, you will want to alter the versions in the scripts/infra_k8s_check.sh file. However, if you do this, we can not guarantee the behavior of Aladdin. 
 
-This will add aladdin to your path as a global alias, allowing you to directly call on aladdin for upcoming commands. You may wish to edit your .bashrc or .bash_profile to execute this command every time you start up a new terminal. 
+You can add Aladdin to your path as a global alias, allowing you to directly call on aladdin for upcoming commands. You may wish to edit your .bashrc or .bash_profile to execute this command every time you start up a new terminal. 
 
     $ eval $(./aladdin.sh env) 
 
 **TODO:**[Our common issues page]
-
+ 
 # Building a Project
-The aladdin-demo is a template project that will demonstrate how to write an aladdin-compatible project. If you are creating a new project from scratch, it is recommended that you start with this template, which already provides simple integration with uwsgi, falcon, nginx, and redis. **TODO** This document will provide a detailed walkthrough of aladdin-demo, explaining each component and best practice guidelines in project development.
+The aladdin-demo is a template project that will demonstrate how to write an aladdin-compatible project. If you are creating a new project from scratch, it is recommended that you start with this template, which already provides simple integration with uWSGI, Falcon, NGINX, Redis, and Elasticsearch. This document will provide a detailed walkthrough of aladdin-demo, explaining each component and best practice guidelines in project development.
+
+## Aladdin-demo Setup
+
+Once Aladdin has been installed and set up, you can jump right in to aladdin-demo to see Aladdin in action. 
+
+    $ git clone git@github.com:fivestars/aladdin-demo.git
+    $ cd aladdin-demo
+    $ aladdin build
+    $ aladdin start
+
+This is all you need to do to deploy aladdin-demo! Confirm that it is working by curling the app endpoint and see what aladdin-demo has to say. 
+
+    $ curl $(minikube service --url aladdin-demo)/app
+    
+      I can show you the world 
 
 ## Aladdin Files
 These components are required for aladdin to run a project
