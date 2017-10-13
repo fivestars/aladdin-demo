@@ -19,6 +19,7 @@ redis:
 elasticsearch:
   create: true
   populate: true
+  # 1000 is the uid of the first non-root user created, in our case that is the elasticsearch user
   id: 1000
   port: 9200
   containerPort: 9200

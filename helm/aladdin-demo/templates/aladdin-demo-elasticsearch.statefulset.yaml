@@ -29,7 +29,6 @@ spec:
         securityContext:
           privileged: true
       # Change the owner of the mounted persistent volume let elasticsearch access it for data and logs
-      # 1000 is the uid of the first non-root user created, in our case that is the elasticsearch user
       # Ideally this can be done with spec.securityContext, which is commented out below, but it 
       # does not appear to work in minikube
       - name: volume-mount-hack
