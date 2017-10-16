@@ -2,6 +2,18 @@
 
 ## Naming Conventions
 
+| | Description | Example |
+|---|---|---|
+| GitHub | A repo name that contains a collection of things that work together | aladdin-demo |
+| Project| Same as Git repository name | aladdin-demo |
+| Yaml file names | \<name of kubernetes object\>.\<kubenetes object type\>.yaml | aladdin-demo.service.yaml |
+| Helm Chart Name | Same as Git repository name | aladdin-demo |
+| k8s label: project | Same as Helm Chart Name, accessed with {{ .Chart.Name }} | aladdin-demo |
+| k8s label: name | Name of component in the project - should match the first part of the file name. Format: \<project name\>-\<component name\> | aladdin-demo-redis |
+| k8s label: app | Same as the label "name". This is redundant and should be removed soon. However at present, Aladdin is dependent on this label. | aladdin-demo-elasticsearch |
+| k8s label githash | Should be {{ .Values.deploy.imageTag }} - which is set automatically by aladdin | dab4923c44 |
+| configmap name | Should match <project name> if used project wide, or match <project name>-<component name> if only used by that component. | aladdin-demo, aladdin-demo-uwsgi |
+
 ## Directory Structure
 
 ## Configuration Files
