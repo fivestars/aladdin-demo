@@ -121,8 +121,40 @@ The [requirements.txt](app/requirements.txt) simply specify certain versions of 
     uwsgi==2.0.15
 
 ### Helm 
-Helm charts are the main way to specify objects to create in Kubernetes. It is highly recommended that you take a look at the official [Helm Chart Template Guide](https://docs.helm.sh/chart_template_guide/), especially if you are unfamiliar with Kubernetes or Helm. It is well written and provides a good overview of what helm is capable of, as well as detailed documentation of sytax. It will help you understand the helm charts in this demo better and allow you to follow along with greater ease. We will also be referencing specific sections of the Helm guide in the rest of this document.
+Helm charts are the main way to specify objects to create in Kubernetes. It is highly recommended that you take a look at the official [Helm Chart Template Guide](https://docs.helm.sh/chart_template_guide/), especially if you are unfamiliar with Kubernetes or Helm. It is well written and provides a good overview of what helm is capable of, as well as detailed documentation of sytax. It will help you understand the helm charts in this demo better and allow you to follow along with greater ease. We will also be referencing specific sections of the Helm guide in other parts of our documentation.
 
+#### Chart.yaml
+The Helm charts for this project are located in [helm/aladdin-demo](helm/aladdin-demo). The root of this directory should contain [Chart.yaml](helm/aladdin-demo/chart.yaml), a simple file that should define the name and version of the project. This name will be used a lot in other files, and can be accessed through {{ .Chart.Name }}. The version is the version of your project, and should be updated for each new release in accordance to the [Semantic Versioning Specification](http://semver.org/).
+
+    apiVersion: v1
+    description: A Helm chart for Kubernetes
+    name: aladdin-demo
+    version: 0.1.0
+
+#### Values.yaml
+Also in the root of the Helm directory is a [values.yaml](heml/aladdin-demo/values.yaml) file. This file defines a number of default values that may be overwritten by other environment specific values files. The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. **TODO add value files for other environments** 
+
+    # Application configuration
+    app:
+      # default to the python app port
+      port: 7892
+      nginx:
+        use: true
+        port: 8001
+
+    deploy:
+      # number of seconds for the containers to perform a graceful shutdown, after which it is voilently terminated
+      terminationGracePeriod: 50
+      replicas: 1
+
+    redis:
+      create: true
+      port: 6379
+      containerPort: 6379
+
+The values in this file can be accessed in other files through {{ .Values.\<value\> }}. For example, {{ .Values.app.port }} will resolve to 7892.
+
+#### Templates
 
 ## Useful and Important Documentation
 - [Style Guidelines](docs/style_guidelines.md)
