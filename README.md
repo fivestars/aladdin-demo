@@ -43,8 +43,11 @@ This is all you need to do to deploy aladdin-demo! Confirm that it is working by
     
       I can show you the world 
 
+We will go over how to get the base project working with Aladdin. See the [Useful and Important Documentation](#useful-and-important-documentation) section for a detailed guide on each of the extra integrated components.
+
 ## Aladdin Files
 These components are required for aladdin to run a project
+
 ### lamp.json
 This file is essentially providing aladdin with a roadmap to your project. The [lamp.json](lamp.json) file for this demo project looks like this.
 
@@ -53,20 +56,73 @@ This file is essentially providing aladdin with a roadmap to your project. The [
         "build_docker": "./build/build_docker.sh",
         "helm_chart": "./helm/aladdin-demo",
         "docker_images": [
-            "aladdin-demo"
+            "aladdin-demo",
+            "aladdin-demo-commands"
         ]
     }
-You will need to specify a name, which should be a project name that adheres to the naming guidelines. This name should be used everywhere.
+You will need to specify a name, which should be a project name that adheres to the naming guidelines defined in [Style Guidelines](docs/style_guidelines.md). This name should be used everywhere.
 
 The `build_docker` field should point to where your docker building script is.
 
-The `helm_chart` field should point to your project's helm directory. See [below](#helm) for more details about what should go in this directory.
+The `helm_chart` field should point to your project's Helm directory. See [below](#helm) for more details about what should go in this directory.
 
 The `docker_images` field should contain a list of the names of the images your project will be using. Only the custom images that you build need to be specified. External images that are used directly, such as busybox, redis, or nginx, do not need to be in this list.
 
-### helm 
-It is highly recommended that you take a look at the official [Helm Chart Template Guide](https://docs.helm.sh/chart_template_guide/#subcharts-and-global-values), especially if you are unfamiliar with Kubernetes or Helm. It is well written and provides a good overview of what helm is capable of, as well as detailed documentation of sytax. It will help you understand the helm charts in this demo better and allow you to follow along with greater ease. We will also be referencing specific sections of the Helm guide in the rest of this document.
-### docker
+### Docker
+Your project will need to be running in Docker containers, which only require a Dockerfile and a build script. It may be beneficial to get a basic understanding of Docker from the [Official Get Started Documentation](https://docs.docker.com/get-started/). 
+
+This is the [aladdin-demo.Dockerfile](app/docker/aladdin-demo.Dockerfile). It starts from a base image of `alpine:3.6` and installs everything in `requirements.txt`, copies over the necessary code, and adds an entrypoint, which is the command that runs when the container starts up. The comments in the code should explain each command.
+
+    FROM alpine:3.6
+
+    # install python and pip with apk package manager
+    RUN apk -Uuv add python py-pip
+
+    # uwsgi in particular requires a lot of packages to install, delete them afterwards
+    RUN apk add --no-cache \
+            gettext \
+            python3 \
+            build-base \
+            linux-headers \
+            python3-dev
+
+    # copies requirements.txt to the docker container
+    ADD app/requirements.txt requirements.txt
+
+    # Install requirements
+    RUN pip3 install --no-cache-dir -r requirements.txt
+
+    # clean up environment by deleting extra packages
+    RUN apk del \
+            build-base \
+            linux-headers \
+            python3-dev
+
+    # specify the directory that CMD executes from
+    WORKDIR /home/aladdin-demo
+
+    # copy over the directory into docker container with given path
+    COPY app /home/aladdin-demo
+
+    # Create unprivileged user account
+    RUN addgroup aladdin-user && \
+        adduser -SD -G aladdin-user aladdin-user
+
+    # Switch to the unpriveleged user account
+    USER aladdin-user
+
+    # run the application with uwsgi once the container has been created
+    ENTRYPOINT ["uwsgi", "--yaml", "/config/uwsgi.yaml"]
+
+The [requirements.txt](app/requirements.txt) simply specify certain versions of libraries that are required for the app to run. This is what we have in our requirements file.
+
+    redis==2.10.6
+    falcon==1.3.0
+    uwsgi==2.0.15
+
+### Helm 
+Helm charts are the main way to specify objects to create in Kubernetes. It is highly recommended that you take a look at the official [Helm Chart Template Guide](https://docs.helm.sh/chart_template_guide/), especially if you are unfamiliar with Kubernetes or Helm. It is well written and provides a good overview of what helm is capable of, as well as detailed documentation of sytax. It will help you understand the helm charts in this demo better and allow you to follow along with greater ease. We will also be referencing specific sections of the Helm guide in the rest of this document.
+
 
 ## Useful and Important Documentation
 - [Style Guidelines](docs/style_guidelines.md)
