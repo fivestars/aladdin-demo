@@ -24,7 +24,7 @@ Next, we create the HorizontalPodAutoscaler object in [aladdin-demo.hpa.yaml](..
         project: {{ .Chart.Name }}
         name: {{ .Chart.Name }}-hpa
         app: {{ .Chart.Name }}-hpa
-        githash: {{.Values.deploy.imageTag}}
+        githash: {{ .Values.deploy.imageTag }}
     spec:
       scaleTargetRef:
         apiVersion: apps/v1beta1

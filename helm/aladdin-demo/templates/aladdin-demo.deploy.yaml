@@ -6,9 +6,9 @@ metadata:
     project: {{ .Chart.Name }}
     name: {{ .Chart.Name }}
     app: {{ .Chart.Name }}
-    githash: {{.Values.deploy.imageTag}}
+    githash: {{ .Values.deploy.imageTag }}
 spec:
-  replicas: {{.Values.deploy.replicas}}
+  replicas: {{ .Values.deploy.replicas }}
   strategy:
     type: RollingUpdate
   template:
