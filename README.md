@@ -43,7 +43,7 @@ This is all you need to do to deploy aladdin-demo! Confirm that it is working by
     
       I can show you the world 
 
-We will go over how to get the base project working with Aladdin. See the [Useful and Important Documentation](#useful-and-important-documentation) section for a detailed guide on each of the extra integrated components.
+We will go over how the base project is working with Aladdin. See the [Useful and Important Documentation](#useful-and-important-documentation) section for a detailed guide on each of the extra integrated components.
 
 ## Aladdin Files
 These components are required for aladdin to run a project
@@ -60,7 +60,7 @@ This file is essentially providing aladdin with a roadmap to your project. The [
             "aladdin-demo-commands"
         ]
     }
-You will need to specify a name, which should be a project name that adheres to the naming guidelines defined in [Style Guidelines](docs/style_guidelines.md). This name should be used everywhere.
+You will need to specify a name, which should be a project name that adheres to the naming conventions defined in [Style Guidelines](docs/style_guidelines#naming-conventions.md). This name should be used everywhere.
 
 The `build_docker` field should point to where your docker building script is.
 
@@ -114,12 +114,48 @@ This is the [aladdin-demo.Dockerfile](app/docker/aladdin-demo.Dockerfile). It st
     # run the application with uwsgi once the container has been created
     ENTRYPOINT ["uwsgi", "--yaml", "/config/uwsgi.yaml"]
 
+We create and use an unpriviledged user account called aladdin-user, as it is best practice to not run uwsgi as root.
+
 The [requirements.txt](app/requirements.txt) simply specify certain versions of libraries that are required for the app to run. This is what we have in our requirements file.
 
     redis==2.10.6
     falcon==1.3.0
     uwsgi==2.0.15
 
+The docker build script should just call `docker build` on the desired Dockerfiles. We have included some helper functions that make the process easier. Our [build_docker.sh](build/build_docker.sh) looks like this.
+
+    #!/usr/bin/env bash
+
+    echo "Building aladdin-demo docker image (~30 seconds)"
+
+    BUILD_PATH="$(cd "$(dirname "$0")"; pwd)"
+    PROJ_ROOT="$(cd "$BUILD_PATH/.." ; pwd)"
+    PRINT_ONLY="${PRINT_ONLY:-false}"
+    HASH="${HASH:-local}"
+    ALL="${ALL:-false}"
+
+    print_only_cmd_wrapper() {
+        typeset cmd="$1"
+        echo "$cmd"
+        if ! $PRINT_ONLY; then
+            ${cmd}
+        fi
+    }
+
+    docker_build() {
+        typeset name="$1" dockerfile="$2" context="$3"
+        TAG="$name:${HASH}"
+        build_cmd="docker build -t $TAG -f $dockerfile $context"
+        print_only_cmd_wrapper "$build_cmd"
+    }
+    cd "$PROJ_ROOT"
+
+    docker_build "aladdin-demo" "app/docker/aladdin-demo.Dockerfile" "."
+
+    #aws login because we are pulling from ecr for base image
+    $(aws --profile sandbox ecr get-login)
+    docker_build "aladdin-demo-commands" "app/docker/aladdin-demo-commands.Dockerfile" "."
+    
 ### Helm 
 Helm charts are the main way to specify objects to create in Kubernetes. It is highly recommended that you take a look at the official [Helm Chart Template Guide](https://docs.helm.sh/chart_template_guide/), especially if you are unfamiliar with Kubernetes or Helm. It is well written and provides a good overview of what helm is capable of, as well as detailed documentation of sytax. It will help you understand the helm charts in this demo better and allow you to follow along with greater ease. We will also be referencing specific sections of the Helm guide in other parts of our documentation.
 
@@ -155,9 +191,112 @@ Also in the root of the Helm directory is a [values.yaml](heml/aladdin-demo/valu
 The values in this file can be accessed in other files through {{ .Values.\<value\> }}. For example, {{ .Values.app.port }} will resolve to 7892.
 
 #### Templates
+The [templates](helm/aladdin-demo/templates/) directory is for template files. For our base project, we just need a Kubernetes Deployment object and Service object.
+
+In [aladdin-demo.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo.deploy.yaml) we specify the Deployment object for the aladdin-demo app. The file contains a lot of different components for the integration of various other tools, but for the basic app, the deployment should look something like this. 
+
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    metadata:
+      name: {{ .Chart.Name }}
+      labels:
+        project: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}
+        app: {{ .Chart.Name }}
+        githash: {{ .Values.deploy.imageTag }}
+    spec:
+      replicas: {{ .Values.deploy.replicas }}
+      strategy:
+        type: RollingUpdate
+      template:
+        metadata:
+          labels:
+            project: {{ .Chart.Name }}
+            name: {{ .Chart.Name }}
+            app: {{ .Chart.Name }}
+        spec:
+          terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
+          containers:
+            # This is a container that runs the falcon aladdin-demo app with uwsgi server
+          - name: {{ .Chart.Name }}
+            # Docker image for this container
+            image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
+            workingDir: /home/{{ .Chart.Name}} 
+            # Container port that is being exposed within the node
+            ports:
+            - containerPort: {{ .Values.app.port }}
+              protocol: TCP
+            # Mount the configuration file into the docker container
+            volumeMounts:
+              # Absolute path is used here
+              - mountPath: /config/
+                name: {{ .Chart.Name }}-uwsgi
+          # Specify volumes that will be mounted in the containers
+          volumes:
+            - name: {{ .Chart.Name }}-uwsgi
+              configMap:
+                name: {{ .Chart.Name }}-uwsgi
+
+We specify the image in spec.template.spec.containers. If using a custom built docker image, the name should be the same name as what it is named in the build docker script. The `{{ .Values.deploy.ecr }}` and `{{ .Values.deploy.imageTag }}` are automatically populated by Aladdin. 
+
+We also mount the configmap for uwsgi using the cofiguration file guidelines specified in [Style Guidelines](docs/style_guidelines.md#configuration-files).
+
+In [aladdin-demo.service](helm/aladdin-demo/templates/aladdin-demo.service.yaml) we specify the Serivce object for aladdin-demo.
+
+    apiVersion: v1
+    kind: Service
+    metadata: 
+      name: {{ .Chart.Name }}
+      labels:
+        project: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}
+        app: {{ .Chart.Name }}
+        githash: {{ .Values.deploy.imageTag }}
+    spec:
+      # Aladdin will fill this in as NodePort which will expose itself to things outside of the cluster
+      # This is to highlight difference between public and private service types, and to only use
+      # public service types when it truly should be public
+      type: {{ .Values.service.publicServiceType | quote }}
+      ports:
+        - name: http
+          port: {{ .Values.app.port }}
+      selector:
+        # Get the aladdin-demo deployment configuration from aladdin-demo.deploy.yaml
+        name: {{ .Chart.Name }}
+
+This file should be much simpler compared to the deployment file, since it just sets up a port, in this case a public NodePort and then through a selector, hooks up the deployment object so that it serves this port. 
+
+## Falcon and uWSGI
+We set up a very simple Falcon API app that is backed by uWSGI. The falcon app is defined in [run.py](app/run.py) and it simply adds a few endpoints to the api. 
+
+    import falcon
+
+    class BaseResource(object):
+        def on_get(self, req, resp):
+            resp.status = falcon.HTTP_200
+            resp.body = ('\n I can show you the world \n \n')
+
+    app = falcon.API()
+
+    app.add_route('/app', BaseResource())
+
+Our code is in `run.py` and we named our falcon API object `app`, so we specify those things in the uWSGI config file in [\_uwsgi.yaml.tpl](helm/aladdin-demo/templates/_uwsgi.yaml.tpl).
+
+    {{ define "uwsgi-config" -}}
+    uwsgi:
+      uid: aladdin-user
+      gid: aladdin-user
+      master: true
+      http: : {{ .Values.app.port }}
+      wsgi-file: run.py
+      callable: app
+    {{ end }}
+
+With these components in place, we have now created a simple project with Aladdin! For documentation on how we integrated other components, look below at [Useful and Important Documentation](#useful-and-important-documentation)!
 
 ## Useful and Important Documentation
 - [Style Guidelines](docs/style_guidelines.md)
+- [Debugging Tips and Tricks]
 - [CommandsContainers](docs/commands_containers.md)
 - [InitContainers](docs/init_containers.md)
 - [Using Nginx](docs/nginx.md)
