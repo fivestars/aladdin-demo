@@ -36,10 +36,10 @@ spec:
       - name: init-volume-chown
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ["sh", "-c", "chown -R {{ .Values.elasticsearch.id }}:{{ .Values.elasticsearch.id }} /stateful"]
+        command: ["sh", "-c", "chown -R {{ .Values.elasticsearch.id }}:{{ .Values.elasticsearch.id }} /usr/share/elasticsearch/stateful"]
         volumeMounts:
         - name: storage
-          mountPath: usr/share/elasticsearch/stateful
+          mountPath: /usr/share/elasticsearch/stateful
       containers:
       - name: {{ .Chart.Name }}-elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
