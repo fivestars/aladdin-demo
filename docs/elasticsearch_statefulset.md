@@ -70,6 +70,13 @@ At the very bottom, we define the volumeClaimTemplates, which specifies what a P
             storage: {{ .Values.elasticsearch.storage }}
 We have requested a standard storage of 1 Gigabyte that allows one node to read and write to it at a given time. 
 
+We take advantage of the dynamic allocation provided by minikube for provisioning this PersistentVolume. However, in a non-local environment, depending on how your Kubernetes cluster is run, it is probably better to manually create these volumes. For example, if your Kubernetes cluster is running in AWS over multiple zones, and you are using EBS volumes as your PersistentVolumes for your StatefulSet. Kubernetes cannot automatically detect which zone the EBS volume is in, so it might try to put the StatefulSet pod in a different zone, in which case it will not be able to connect to its EBS volume. This is where node affinity comes in handy as a way to specify where a pod can be placed. Though it is not used in this local example, we add a snippet of code that demonstrate how this would be set. You can read more about [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/) and [Running Kubernetes in Multiple Zones](https://kubernetes.io/docs/admin/multiple-zones/).
+
+      {{ if .Values.affinity }}
+        nodeSelector:
+          affinity: {{ .Values.affinity }}
+      {{ end }}
+
 Next, let us examine the two initContainers for this stateful set. The first one increases the vm.max_map_count to satisfy the bootstrap check for elasticsearch. You can read more about this in the [official Elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html).
 
         initContainers:

@@ -22,6 +22,15 @@ spec:
         project: {{ .Chart.Name }}
         app: {{ .Chart.Name }}-elasticsearch
     spec:
+      # Not set in local but very important for nonlocal development! If we run the Kubernetes cluster
+      # on top of AWS, Kubernetes does not have information about which AWS zone each component is, 
+      # For a StatefulSet, if we use EBS as our persistent volume, the StatefulSet and the EBS volume
+      # must be in the same zone. It may be best to not rely on the dynamic allocation of volume but
+      # rather manually create EBS volumes so we know exactly where the pod should go.
+      {{ if .Values.affinity }}
+        nodeSelector:
+          affinity: {{ .Values.affinity }}
+      {{ end }}
       initContainers:
       # Increase the vm.max_map_count to satisfy the bootstrap checks of elasticsearch
       - name: init-sysctl
