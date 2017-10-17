@@ -31,7 +31,7 @@ spec:
       - name: {{ .Chart.Name }}
         # Docker image for this container
         image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
-        workingDir: /home/{{ .Chart.Name }} 
+        workingDir: /home
         # Container port that is being exposed within the node
         ports:
         - containerPort: {{ .Values.app.port }}
@@ -39,11 +39,11 @@ spec:
         # Mount the configuration file into the docker container
         volumeMounts:
           # Absolute path is used here
-          - mountPath: /home/{{ .Chart.Name }}/config/uwsgi.yaml
+          - mountPath: /home/config/uwsgi.yaml
             name: {{ .Chart.Name }}-uwsgi
             subPath: uwsgi.yaml
 {{ if .Values.deploy.withMount }}
-          - mountPath: /home/{{ .Chart.Name }}
+          - mountPath: /home
             name: {{ .Chart.Name }}
 {{ end }} # /withMount
         envFrom:

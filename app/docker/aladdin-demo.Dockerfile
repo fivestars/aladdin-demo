@@ -24,10 +24,10 @@ RUN apk del \
         python3-dev
 
 # specify the directory that CMD executes from
-WORKDIR /home/aladdin-demo
+WORKDIR /home
 
 # copy over the directory into docker container with given path
-COPY app /home/aladdin-demo
+COPY app /home
 
 # Create unprivileged user account
 RUN addgroup aladdin-user && \

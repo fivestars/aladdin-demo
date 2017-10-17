@@ -1,3 +1,3 @@
 #!/bin/sh
 
-uwsgi /home/aladdin-demo/config/uwsgi.yaml
+uwsgi /home/config/uwsgi.yaml

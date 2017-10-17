@@ -8,7 +8,7 @@ In our example, we can mount everything in the `app` directory into the `aladdin
 
             volumeMounts:
     {{ if .Values.deploy.withMount }}
-              - mountPath: /home/{{ .Chart.Name }}
+              - mountPath: /home
                 name: {{ .Chart.Name }}
     {{ end }} # /withMount
         
@@ -21,4 +21,4 @@ In our example, we can mount everything in the `app` directory into the `aladdin
                 path: {{ .Values.deploy.mountPath }}/app
     {{ end }} 
 
-Notice that in [aladidn-demo.Dockerfile](../app/docker/aladdin-demo), we copy over the code in `app` with `COPY app /home/aladdin-demo`, so everything still works when code mounting is turned off. The mounting will actually overrwrite these files, so the mounted code is used when `--with-mount` is used.
+Notice that in [aladidn-demo.Dockerfile](../app/docker/aladdin-demo), we copy over the code in `app` with `COPY app /home`, so everything still works when code mounting is turned off. The mounting will actually overrwrite these files, so the mounted code is used when `--with-mount` is used.
