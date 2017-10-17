@@ -88,13 +88,20 @@ spec:
         volumeMounts:
         - name: workdir
           mountPath: "/work-dir"
-{{ end }}
+{{ end }} # /nginx.use
 {{ if .Values.redis.create }}
         # initContainer that checks that redis contianer is up and running
 {{ include "redis_check" . | indent 6 }}
         # initContainer that populates redis, only runs if the previous one terminates successfully
 {{ include "redis_populate" . | indent 6 }}
-{{ end }}
+{{ end }} # /redis.create
+        # initContainers that check that elasticsearch container is up and running, populates it if it is
+{{ if .Values.elasticsearch.create }}
+{{ include "elasticsearch_check" . | indent 6 }}
+{{ if .Values.elasticsearch.populate }}
+{{ include "elasticsearch_populate" . | indent 6}}
+{{ end }} # /elasticsearch.populate
+{{ end }} # /elasticsearch.create
 ############# end of containers #############
       # Specify volumes that will be mounted in the containers
       volumes:

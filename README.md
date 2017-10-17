@@ -60,3 +60,5 @@ It is highly recommended that you take a look at the official [Helm Chart Templa
 - [Using Nginx](docs/nginx.md)
 - [Using Redis](docs/redis.md)
 - [Autoscaling](docs/autoscaling.md)
+- [Using Elasticsearch with StatefulSet](docs/elasticsearch_statefulset.md)
+
