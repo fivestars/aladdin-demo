@@ -37,4 +37,4 @@ RUN addgroup aladdin-user && \
 USER aladdin-user
 
 # run the application with uwsgi once the container has been created
-ENTRYPOINT ["uwsgi", "--yaml", "/config/uwsgi.yaml"]
+ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
