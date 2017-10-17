@@ -2,7 +2,7 @@
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
-  name: db
+  name: {{ .Chart.Name }}-elasticsearch
   labels:
     project: {{ .Chart.Name }}
     name: {{ .Chart.Name }}-elasticsearch
@@ -19,6 +19,8 @@ spec:
     metadata:
       labels:
         name: {{ .Chart.Name }}-elasticsearch # has to match .spec.selector.matchLabels
+        project: {{ .Chart.Name }}
+        app: {{ .Chart.Name }}-elasticsearch
     spec:
       initContainers:
       # Increase the vm.max_map_count to satisfy the bootstrap checks of elasticsearch
@@ -31,14 +33,13 @@ spec:
       # Change the owner of the mounted persistent volume let elasticsearch access it for data and logs
       # Ideally this can be done with spec.securityContext, which is commented out below, but it 
       # does not appear to work in minikube
-      - name: volume-mount-hack
+      - name: init-volume-chown
         image: busybox
         imagePullPolicy: IfNotPresent
         command: ["sh", "-c", "chown -R {{ .Values.elasticsearch.id }}:{{ .Values.elasticsearch.id }} /stateful"]
         volumeMounts:
         - name: storage
-          mountPath: /stateful
-      terminationGracePeriodSeconds: 10
+          mountPath: usr/share/elasticsearch/stateful
       containers:
       - name: {{ .Chart.Name }}-elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
@@ -60,7 +61,7 @@ spec:
             name: {{ .Chart.Name }}-elasticsearch
       # We need to modify the security context for the pod so that the volumes mounted under the elasticsearch
       # user instead of the default root user, allowing elasticsearch to access the persistent volume
-      # This does not currently work with minikube, hence the volume-mount-hack initContainer above
+      # This does not currently work with minikube, hence the init-volume-chown initContainer above
       # securityContext: 
       #   fsGroup: {{ .Values.elasticsearch.id }}
   # Define the persistent volume claim, which will dynamically allocate a peristent volume that
@@ -74,5 +75,5 @@ spec:
       storageClassName: standard
       resources:
         requests:
-          storage: 1Gi
+          storage: {{ .Values.elasticsearch.storage }}
 {{ end }}

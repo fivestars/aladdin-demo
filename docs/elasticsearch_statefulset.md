@@ -17,8 +17,11 @@ We start off by defining some values for elasticsearch in [values.yaml](../helm/
       id: 1000
       port: 9200
       containerPort: 9200
+      storage: 1Gi
       
 The `id` field here refers to the uid of the `elasticsearch` user in the docker container. This value is used to change the ownership of volume mounts, which we discuss in more detail below. 
+
+The `storage` field specifies how much storage we want to provision for the Persistent Volumes. Here it is 1 Gigabyte. 
 
 We will use the officially supported elasticsearch docker image and define and load in the configuration for this elasticsearch image following the [Style Guidelines](style_guidelines.md). The config file is defined in [\_elasticsearch.yml.tpl](../heml/aladdin-demo/templates/_elasticsearch.yml.tpl) with a few notable settings highlighted in the comments.
 
@@ -51,7 +54,7 @@ We will use the officially supported elasticsearch docker image and define and l
 
 We then create a Kubernetes Service object in [aladdin-demo-elasticsearch.service.yaml](../helm/aladdin-demo/templates/aladdin-demo-elasticsearch.service.yaml). This should look pretty simple and standard, the one **important difference** is that we need to set `spec.clusterIP: None`, making this a [Headless Service](https://kubernetes.io/docs/concepts/services-networking/service/), which is required for using with a StatefulSet. 
 
-We crate the StatefulSet object in [aladdin-demo-elasticsearch.statefulset.yaml](../helm/aladdin-demo/templates/aladidn-demo-elasticsearch.statefulset.yaml). There are a lot of components to this file, but let us take a detailed look at each one.
+We create the StatefulSet object in [aladdin-demo-elasticsearch.statefulset.yaml](../helm/aladdin-demo/templates/aladidn-demo-elasticsearch.statefulset.yaml). There are a lot of components to this file, but let us take a detailed look at each one.
 
 At the very bottom, we define the volumeClaimTemplates, which specifies what a PersistentVolume for this StatefulSet needs to be like. The Aladdin minikube should be set up such that it will dynamically provision the appropriate PeristentVolumes if they do not already exist, and the pod should be able to find the correct PersistenVolume if it has already been allocated to it. 
 
@@ -64,7 +67,7 @@ At the very bottom, we define the volumeClaimTemplates, which specifies what a P
         storageClassName: standard
         resources:
           requests:
-            storage: 1Gi
+            storage: {{ .Values.elasticsearch.storage }}
 We have requested a standard storage of 1 Gigabyte that allows one node to read and write to it at a given time. 
 
 Next, let us examine the two initContainers for this stateful set. The first one increases the vm.max_map_count to satisfy the bootstrap check for elasticsearch. You can read more about this in the [official Elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html).
@@ -86,7 +89,7 @@ The second initContainer should only be needed when running this in a minikube e
 Unfortunately, this is not currently supported in minikube. Instead, we will mount this volume into an initContainer, then run a `chown` command to change the owner of this directory to the elasticsearch user id, which should be 1000, the first non-root user id. This also changes the owner of this volume in the host, so when we mount it to our elasticsearch container, it will be under the elasticsearch user. 
 
         initContainers:
-        - name: volume-mount-hack
+        - name: init-volume-chown
         image: busybox
         command: ["sh", "-c", "chown -R {{ .Values.elasticsearch.id }}:{{ .Values.elasticsearch.id }} /stateful"]
         volumeMounts:
@@ -213,3 +216,5 @@ Now set `elasticsearch.populate` to `false` and redeploy the app with
    
     $ aladdin restart
 Check to see if the elasticsearch still works, even though we didn't populate it this time around! You should get the same output as last time, meaning the data persisted between deployments, hooray!
+
+For the purpose of this tutorial, we made elasticsearch.populate a toggle-able value to explicitly show what is going on. However, in a non-tutorial environment, it would not be good practice to need to change a helm variable between deploys. One possible way to handle this is to create a separate population script in a [Commands Container](./commands_container.md) that can be invoked explicited to populate data. 
