@@ -11,3 +11,8 @@ metadata:
 # Load them into the environment by using configMapRef in the deploy.yaml file
 data:
   REDIS_CREATE: {{ .Values.redis.create | quote }}
+  ELASTICSEARCH_CREATE: {{ .Values.elasticsearch.create | quote }}
+  ELASTICSEARCH_POPULATE: {{ .Values.elasticsearch.populate | quote }}
+  ELASTICSEARCH_HOST: {{ .Chart.Name }}-elasticsearch
+  ELASTICSEARCH_PORT: {{ .Values.elasticsearch.port | quote }}
+  

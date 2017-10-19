@@ -3,6 +3,8 @@ import os
 
 from redis.exceptions import RedisError
 from redis_util.redis_connection import ping_redis
+from elasticsearch import ElasticsearchException
+from elasticsearch_util.elasticsearch_connection import get_es_health
 
 def parse_args(sub_parser):
     subparser = sub_parser.add_parser("status", help="Report on the status of the application")
@@ -13,6 +15,7 @@ def print_status(arg):
     """ Prints the status of the aladdin-demo pod and the redis pod """
     print_aladdin_demo_status()
     print_redis_status()
+    print_elasticsearch_status()
 
 def print_aladdin_demo_status():
     print("pinging aladdin-demo ...")
@@ -39,3 +42,14 @@ def print_redis_status():
         print("redis connection ping successful {}".format(status))
     except RedisError as e:
         print("redis connection error: {}".format(e))
+
+def print_elasticsearch_status():
+    print("getting elasticsearch health ...")
+    if os.environ["ELASTICSEARCH_CREATE"] == "false":
+        print("elasticsearch creation flag set to false, no other elasticsearch connection available at this time")
+        return
+    try: 
+        status = get_es_health()
+        print("elasticsearch health retrieved: {}".format(status))
+    except ElasticsearchException as e:
+        print("encountered elasticsearch error: {}".format(e))

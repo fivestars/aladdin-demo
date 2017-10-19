@@ -12,13 +12,12 @@ Changing the `create` field to `true` and restarting the app with `aladdin resta
     
 This should return `I can show you the world from Redis`. In the Kubernetes dashboard, you should also see two pods, one named `aladdin-demo` and the other named `aladdin-demo-redis`. We will detail how everything fits together below. 
 
-We are using the `redis:2.8` image with no modifications, so a Dockerfile is not needed. Eventually our python app will be needing information about redis, so we can store this information as key-value pairs the [configMap](../helm/aladdin-demo/templates/aladdin-demo.configMap.yaml).
+We are using the `redis:2.8` image with no modifications, so a Dockerfile is not needed. Eventually our python app will be needing information about redis, so we can store this information as key-value pairs the [configMap](../helm/aladdin-demo/templates/aladdin-demo.configMap.yaml).Ω¥
 ```yaml
 data:
-  REDIS_HOST: {{ .Chart.Name }}-redis
-  REDIS_PORT: {{ .Values.redis.port | quote }}
   REDIS_CREATE: {{ .Values.redis.create | quote }}
 ```
+
 In [aladdin-demo.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo.deploy.yaml), we load the data from the [configMap](../helm/aladdin-demo/templates/aladdin-demo.configMap.yaml) as environment variables. This allows the python app to access the redis information through `os.environ["KEY"]`, as we will see later. 
 ```yaml
 envFrom:
@@ -35,8 +34,8 @@ import os
 redis_conn = None
 if os.environ["REDIS_CREATE"] == "true":
     redis_conn = redis.StrictRedis(
-                host=os.environ["REDIS_HOST"],
-                port=os.environ["REDIS_PORT"],
+                host=os.environ["ALADDIN_DEMO_REDIS_SERVICE_HOST"],
+                port=os.environ["ALADDIN_DEMO_REDIS_SERVICE_PORT"],
             )
 ```
 We populate redis with a simple message in [redis_populate.py](../app/redis_util/redis_populate.py). This code is excuted by an initContainer, which we will explain in more detail below.
