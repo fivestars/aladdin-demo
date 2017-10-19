@@ -64,6 +64,20 @@ spec:
           subPath: elasticsearch.yml
         - name: storage
           mountPath: /usr/share/elasticsearch/stateful
+        {{ if .Values.elasticsearch.readiness.use }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.elasticsearch.port }}
+          initialDelaySeconds: {{ .Values.elasticsearch.readiness.initalDelay }}
+          periodSeconds: {{ .Values.elasticsearch.readiness.period }}
+        {{ end }}
+        {{ if .Values.elasticsearch.liveness.use }}
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.elasticsearch.port }}
+          initialDelaySeconds: {{ .Values.elasticsearch.liveness.initalDelay }}
+          periodSeconds: {{ .Values.elasticsearch.liveness.period }}
+        {{ end }}
       volumes:
         - name: {{ .Chart.Name }}-elasticsearch
           configMap:

@@ -49,6 +49,24 @@ spec:
         resources:
           requests:
             cpu: 100m
+        {{ if .Values.app.readiness.use }}
+        # Readiness probe stops traffic to this pod if it is not ready, wait until it is ready
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: {{ .Values.app.port }}
+          initialDelaySeconds: {{ .Values.app.readiness.initalDelay }}
+          periodSeconds: {{ .Values.app.readiness.period }}
+        {{ end }} # /app.readiness.use
+        # Liveness probe terminates and restarts the pod is unhealthy
+        {{ if .Values.app.liveness.use }}
+        livenessProbe: 
+          httpGet:
+            path: /ping
+            port: {{ .Values.app.port }}
+          initialDelaySeconds: {{ .Values.app.liveness.initalDelay }}
+          periodSeconds: {{ .Values.app.readiness.period }}
+        {{ end }} # /app.liveness.use
 ############# nginx server container ########
 ## This is a container for an nginx server
 #############################################
