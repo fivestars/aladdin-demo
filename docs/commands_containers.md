@@ -10,37 +10,41 @@ In this template project, we demonstrate a simple `status` command, which will p
 We start off by creating a [commands_app](../app/commands_app) folder that contains the [requirements](../app/commands_app/requirements.txt) for the commands that need to be run, and a [commands](../app/commands_app/commands) folder that has separate files for each command. In this case, we want to run `status`, so we create [status.py](../app/commands_app/commands/status.py). 
 
 The only required function in [status.py](../app/commands_app/commands/status.py) is a `parse_args(sub_parser)` function. Aladdin will look for this function when you try to run your command. The command `status` must be added to the `sub_parser`, and `set_defaults` should take a function that points to the function that actually runs. For more information on what goes on behind the scenes, look in the aladdin repo `aladdin/py-aladdin/main.py`.
-
-    def parse_args(sub_parser):
-        subparser = sub_parser.add_parser("status", help="Report on the status of the application")
-        # register the function to be executed when command "status" is called
-        subparser.set_defaults(func=print_status)
-        
-    def print_status(arg):
-        ...
-
+```python
+def parse_args(sub_parser):
+    subparser = sub_parser.add_parser("status", help="Report on the status of the application")
+    # register the function to be executed when command "status" is called
+    subparser.set_defaults(func=print_status)
+    
+def print_status(arg):
+    ...
+```
 ## Create Docker Container
 
 We will also need to create a Dockerfile for this container. The image for this commands container must be inherited from the aladdin `commands_base` docker image, and copy over the folder containing the command functions as `command`. We demonstrate this in [aladdin-demo-commands.Dockerfile](../app/docker/aladdin-demo-commands.Dockerfile). 
-
-    FROM 281649891004.dkr.ecr.us-east-1.amazonaws.com/aladdin:commands_base
-    ...
-    COPY app/commands_app/commands commands
+```Dockerfile
+FROM 281649891004.dkr.ecr.us-east-1.amazonaws.com/aladdin:commands_base
+...
+COPY app/commands_app/commands commands
+```
 Update the [build docker script](../build/build_docker.sh) to build the commands container as well.
 
-    docker_build "aladdin-demo-commands" "app/docker/aladdin-demo-commands.Dockerfile" "."
-
+```shell
+docker_build "aladdin-demo-commands" "app/docker/aladdin-demo-commands.Dockerfile" "."
+```
 ## Create Kubernetes Deploy File
 We create [aladdin-demo-commands.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo-commands.deploy.yaml).
 
 ## Update lamp.json
 Include the commands container image in `docker_images`.
-    {
-        "name": "aladdin-demo",
-        "build_docker": "./build/build_docker.sh",
-        "helm_chart": "./helm/aladdin-demo",
-        "docker_images": [
-            "aladdin-demo",
-            "aladdin-demo-commands"
-        ]
-    }
+```json
+{
+    "name": "aladdin-demo",
+    "build_docker": "./build/build_docker.sh",
+    "helm_chart": "./helm/aladdin-demo",
+    "docker_images": [
+        "aladdin-demo",
+        "aladdin-demo-commands"
+    ]
+}
+```

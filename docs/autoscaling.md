@@ -6,48 +6,48 @@ In order to enable autoscaling, the first step is to make sure that Heapster is 
     $ minikube addons enable heapster
 
 Next, we need to request cpu resources in the deployment file of the pod we are autoscaling. For each container in [aladdin-demo.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo.deploy.yaml), we add
-
-    resources:
-      requests:
-        cpu: 100m
-        
+```yaml
+resources:
+  requests:
+    cpu: 100m
+``` 
 This is an optional field when not worrying about autoscaling, but it is required in order for the autoscaler to monitor percentage of cpu usage. In this example, we request 100 millicpu for each container. You can read more about what cpu means and how to manage other resources [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/). 
 
 Next, we create the HorizontalPodAutoscaler object in [aladdin-demo.hpa.yaml](../helm/aladdin-demo/templates/aladdin-demo.hpa.yaml).
-
-    apiVersion: autoscaling/v1
-    # This is an autoscaler for aladdin-demo
-    kind: HorizontalPodAutoscaler
-    metadata:
-      name: {{ .Chart.Name }}-hpa
-      labels:
-        project: {{ .Chart.Name }}
-        name: {{ .Chart.Name }}-hpa
-        app: {{ .Chart.Name }}-hpa
-        githash: {{ .Values.deploy.imageTag }}
-    spec:
-      scaleTargetRef:
-        apiVersion: apps/v1beta1
-        kind: Deployment
-        name: {{ .Chart.Name }}
-      minReplicas: 1
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
-
+```yaml
+apiVersion: autoscaling/v1
+# This is an autoscaler for aladdin-demo
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Chart.Name }}-hpa
+  labels:
+    project: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}-hpa
+    app: {{ .Chart.Name }}-hpa
+    githash: {{ .Values.deploy.imageTag }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1beta1
+    kind: Deployment
+    name: {{ .Chart.Name }}
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+```
 If the cpu utilization percentage of a pod exceeds 50%, the autoscaler will spin up new pods until each pod has a below 50% cpu utilization. This utilization percentage is quite low for purposes of demonstration. By default, autoscaler will check on the pods every 30 seconds. This can be changed through the controller manager's `--horizontal-pod-autoscaler-sync-period` flag.
 
 We also add a `BusyResource` in [run.py](../app/run.py), which performs a CPU intensive operation upon get request to force autoscaling.
+```python
+class BusyResource(object):
+    def on_get(self, req, resp):
+        n = 0.0001
+        for i in range(1000000):
+            n += sqrt(n)
+        resp.body = ('busy busy...')
 
-    class BusyResource(object):
-        def on_get(self, req, resp):
-            n = 0.0001
-            for i in range(1000000):
-                n += sqrt(n)
-            resp.body = ('busy busy...')
-
-    app = falcon.API()
-    app.add_route('app/busy', BusyResource())
-
+app = falcon.API()
+app.add_route('app/busy', BusyResource())
+```
 Confirm that the aladdin-demo app is running. Then check the status of the autoscaler and the current number of pods with
 
     $ kubectl get hpa
