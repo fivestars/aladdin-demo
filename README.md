@@ -297,6 +297,7 @@ With these components in place, we have now created a simple project with Aladdi
 ## Useful and Important Documentation
 - [Style Guidelines](docs/style_guidelines.md)
 - [Debugging Tips and Tricks](docs/debugging_tips_and_tricks.md)
+- [Code_Mounting](docs/code_mounting.md)
 - [CommandsContainers](docs/commands_containers.md)
 - [InitContainers](docs/init_containers.md)
 - [Using Nginx](docs/nginx.md)
