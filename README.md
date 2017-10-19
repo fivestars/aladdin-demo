@@ -57,6 +57,7 @@ It is highly recommended that you take a look at the official [Helm Chart Templa
 - [Style Guidelines](docs/style_guidelines.md)
 - [CommandsContainers](docs/commands_containers.md)
 - [InitContainers](docs/init_containers.md)
+- [Liveness and Readiness Probes](docs/probes)
 - [Using Nginx](docs/nginx.md)
 - [Using Redis](docs/redis.md)
 - [Autoscaling](docs/autoscaling.md)
