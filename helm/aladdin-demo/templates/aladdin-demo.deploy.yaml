@@ -31,7 +31,7 @@ spec:
       - name: {{ .Chart.Name }}
         # Docker image for this container
         image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
-        workingDir: /home/{{ .Chart.Name}} 
+        workingDir: /home
         # Container port that is being exposed within the node
         ports:
         - containerPort: {{ .Values.app.port }}
@@ -39,8 +39,13 @@ spec:
         # Mount the configuration file into the docker container
         volumeMounts:
           # Absolute path is used here
-          - mountPath: /config/
+          - mountPath: /home/config/uwsgi.yaml
             name: {{ .Chart.Name }}-uwsgi
+            subPath: uwsgi.yaml
+{{ if .Values.deploy.withMount }}
+          - mountPath: /home
+            name: {{ .Chart.Name }}
+{{ end }} # /withMount
         envFrom:
           # Load the data from configMap into the runtime environment
           # This allows us to use os.environ["KEY"] to look up variables
@@ -115,3 +120,8 @@ spec:
         - name: workdir 
           emptyDir: {}
 {{ end }}
+{{ if .Values.deploy.withMount }}
+        - name: {{ .Chart.Name }}
+          hostPath:
+            path: {{ .Values.deploy.mountPath }}/app
+{{ end }} # /withMount

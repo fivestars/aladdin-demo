@@ -55,6 +55,7 @@ It is highly recommended that you take a look at the official [Helm Chart Templa
 
 ## Useful and Important Documentation
 - [Style Guidelines](docs/style_guidelines.md)
+- [Code_Mounting](docs/code_mounting.md)
 - [CommandsContainers](docs/commands_containers.md)
 - [InitContainers](docs/init_containers.md)
 - [Using Nginx](docs/nginx.md)
