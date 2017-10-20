@@ -59,7 +59,8 @@ This file is essentially providing aladdin with a roadmap to your project. The [
         "aladdin-demo",
         "aladdin-demo-commands"
     ]
-}```
+}
+```
 You will need to specify a name, which should be a project name that adheres to the naming conventions defined in [Style Guidelines](docs/style_guidelines#naming-conventions.md). This name should be used everywhere.
 
 The `build_docker` field should point to where your docker building script is.
