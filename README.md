@@ -191,7 +191,7 @@ redis:
 ```
 The values in this file can be accessed in other files through {{ .Values.\<value\> }}. For example, {{ .Values.app.port }} will resolve to 7892.
 
-The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. It is common practice to have multiple development environments, such as local, dev, staging, and prod, which may require different parameters to be set. In our example, we will use DEV, STAG, and PROD as three different Kubernetes clusters, and we put their respective values files in a separate [values](../helm/aladdin-demo/values) folder that Aladdin can find when running on that cluster. See the aladdin documentation for more detail on how to run in non-local environments.
+The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. It is common practice to have multiple environments, such as local, dev, staging, and prod, which may require different parameters to be set. In our example, we will use DEV, STAG, and PROD as three different Kubernetes clusters, and we put their respective values files in a separate [values](../helm/aladdin-demo/values) folder that Aladdin can find when running on that cluster. See the aladdin documentation for more detail on how to run in non-local environments.
 #### Templates
 The [templates](helm/aladdin-demo/templates/) directory is for template files. For our base project, we just need a Kubernetes Deployment object and Service object.
 
