@@ -1,6 +1,6 @@
 # Liveness and Readiness Probes
 
-Liveness and readiness probes are a way for Kubernetes to constantly monitor your application and performing restarts or holding off traffic as needed. From the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/): 
+Liveness and readiness probes are a way for Kubernetes to constantly monitor your application by performing restarts or holding off traffic as needed. From the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/): 
     
 > The kubelet uses liveness probes to know when to restart a Container. For example, liveness probes could catch a deadlock, where an application is running, but unable to make progress. Restarting a Container in such a state can help to make the application more available despite bugs.
 
@@ -19,7 +19,7 @@ readinessProbe:
     port: {{ .Values.app.port }}
   initialDelaySeconds: {{ .Values.app.readiness.initalDelay }}
   periodSeconds: {{ .Values.app.readiness.period }}
-# Liveness probe terminates and restarts the pod is unhealthy
+# Liveness probe terminates and restarts the pod if unhealthy
 livenessProbe: 
   httpGet:
     path: /ping
