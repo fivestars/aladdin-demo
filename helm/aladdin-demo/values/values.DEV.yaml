@@ -1,0 +1,4 @@
+# Values here will overwrite values.yaml defaults. These values are used when deploying to DEV cluster
+
+elasticsearch:
+  create: false
