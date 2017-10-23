@@ -61,3 +61,6 @@ volumeMounts:
     name: {{ .Chart.Name }}-nginx
 ```
 This will put /etc/nginx/nginx.conf into the docker container with that absolute path, equivalent to copying over a local nginx.conf file in a Dockerfile. 
+
+## Git Hooks
+You may wish to include git hooks in your project, such as style checks or unit tests. It is recommended that you use this [Fivestars git-hooks](https://github.com/fivestars/git-hooks) tool to structure your custom hooks for better readability. We have set up a [.githooks](../.githooks) directory and written a mock [pre-commit](../.githooks/pre-commit-00-style) hook that simply prints a line and sleeps for 2 seconds. Follow the instructions for installing [git-hooks](https://github.com/fivestars/git-hooks) and try to make a commit to see it in action.

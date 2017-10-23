@@ -1,0 +1,5 @@
+# #!/usr/bin/env bash
+
+echo "Pretending to run style checks..."
+
+sleep 2
