@@ -63,7 +63,7 @@ spec:
           initialDelaySeconds: {{ .Values.app.readiness.initalDelay }}
           periodSeconds: {{ .Values.app.readiness.period }}
         {{ end }} # /app.readiness.use
-        # Liveness probe terminates and restarts the pod is unhealthy
+        # Liveness probe terminates and restarts the pod if unhealthy
         {{ if .Values.app.liveness.use }}
         livenessProbe: 
           httpGet:
