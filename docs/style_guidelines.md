@@ -22,7 +22,7 @@
 All values should be stored in a values.yaml file. The templates should always reference values using helm variables. Configuration files for non-kubernetes objects, such as an nginx config file or a uwsgi config file, should be located in the template folder with a name that begins with an underscore and ends with ".tpl". This gives the ability to easily change configuration values on the fly, without needing to restart the pod every time.
 
 For example, below is the [\_nginx.conf.tpl](../helm/aladdin-demo/templates/_nginx.conf.tpl) file. 
-```json
+```
 {{/* Config file for nginx */}}
 {{ define "nginx-config" -}}
 events {
