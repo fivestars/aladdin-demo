@@ -6,5 +6,6 @@ es_conn = None
 if os.environ["ELASTICSEARCH_CREATE"] == "true":
     es_conn = Elasticsearch(hosts=os.environ["ELASTICSEARCH_HOST"])
 
+
 def get_es_health():
     return es_conn.cluster.health()

@@ -1,5 +1,7 @@
 # #!/usr/bin/env bash
 
-echo "Pretending to run style checks..."
+echo "Making sure flake8 is installed..."
+pip install flake8 &> /dev/null
 
-sleep 2
+# ignore column width error E501
+flake8 --ignore E501 .
