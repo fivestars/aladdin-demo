@@ -1,5 +1,5 @@
 # Using NGINX
-We demonstrate running an nginx container within the same pod as the aladdin-demo app. Our template sets up nginx as a simple proxy server that will listen to all traffic on a port and forward it to the falcon app. We specify the nginx values in the [values.yaml](../helm/aladdin-demo/values.yaml) file.
+We demonstrate running an nginx container within the same pod as the aladdin-demo-server app. Our template sets up nginx as a simple proxy server that will listen to all traffic on a port and forward it to the falcon app. We specify the nginx values in the [values.yaml](../helm/aladdin-demo/values.yaml) file.
 ```yaml
   app:
     # default to the python app port
@@ -8,11 +8,11 @@ We demonstrate running an nginx container within the same pod as the aladdin-dem
       use: false
       port: 8001
 ```       
-Set the `use` field to `true`. This is all you need to do to see nginx work, you can verify this by restarting the app with `aladdin start`. Navigate to the aladdin-demo service pod in the Kubernetes dashboard and you should be able to see two containers running. Read on for how we did it. 
+Set the `use` field to `true`. This is all you need to do to see nginx work, you can verify this by restarting the app with `aladdin start`. Navigate to the aladdin-demo-server service pod in the Kubernetes dashboard and you should be able to see two containers running. Read on for how we did it. 
 
 Since we are just using the `nginx:1.12-alpine` image without modifications, there is no need to create a separate Dockerfile for it. 
 
-We add the nginx configuration files using the templating method described in the [Configuration Files](#configuration-files) section. We then add another container for nginx in [aladdin-demo.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo.deploy.yaml).
+We add the nginx configuration files using the templating method described in the [Configuration Files](#configuration-files) section. We then add another container for nginx in [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml).
 ```yaml
         - name: {{ .Chart.Name }}-nginx
           image: nginx:1.12-alpine
@@ -23,12 +23,12 @@ We add the nginx configuration files using the templating method described in th
             - mountPath: /etc/nginx/
               name: {{ .Chart.Name }}-nginx
 ```
-In the [aladdin-demo.service.yaml](../helm/aladdin-demo/templates/aladdin-demo.service.yaml), we expose the nginx port for the pod so that all incoming requests get routed to nginx first. 
+In the [server/service.yaml](../helm/aladdin-demo/templates/server/service.yaml), we expose the nginx port for the pod so that all incoming requests get routed to nginx first. 
 
 ## Nginx InitContainer
 We have added a simple initContainer for nginx.
 
-In the same [aladdin-demo.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo.deploy.yaml) file, we add a field for initContainers.
+In the same [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml) file, we add a field for initContainers.
 ```yaml
     initContainers:
   {{ if .Values.app.nginx.use }}
@@ -57,4 +57,4 @@ We also mounth this volume in the nginx container
     - mountPath: /usr/share/nginx/html
       name: workdir
 ```
-This is all that is needed for this simple initContainer to run. We can verify that it wrote the `index.html` file by simpling running `$ curl $(minikube service --url aladdin-demo)`, which should return `You have reached NGINX`.
+This is all that is needed for this simple initContainer to run. We can verify that it wrote the `index.html` file by simpling running `$ curl $(minikube service --url aladdin-demo-server)`, which should return `You have reached NGINX`.

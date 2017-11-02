@@ -39,7 +39,7 @@ Once Aladdin has been installed and set up, you can jump right in to aladdin-dem
 
 This is all you need to do to deploy aladdin-demo! Confirm that it is working by curling the app endpoint and see what aladdin-demo has to say. 
 
-    $ curl $(minikube service --url aladdin-demo)/app
+    $ curl $(minikube service --url aladdin-demo-server)/app
     
       I can show you the world 
 
@@ -72,7 +72,7 @@ The `docker_images` field should contain a list of the names of the images your 
 ### Docker
 Your project will need to be running in Docker containers, which only require a Dockerfile and a build script. It may be beneficial to get a basic understanding of Docker from the [Official Get Started Documentation](https://docs.docker.com/get-started/). 
 
-This is the [aladdin-demo.Dockerfile](app/docker/aladdin-demo.Dockerfile). It starts from a base image of `alpine:3.6` and installs everything in `requirements.txt`, copies over the necessary code, and adds an entrypoint, which is the command that runs when the container starts up. The comments in the code should explain each command.
+This is the [Dockerfile](app/Dockerfile). It starts from a base image of `alpine:3.6` and installs everything in `requirements.txt`, copies over the necessary code, and adds an entrypoint, which is the command that runs when the container starts up. The comments in the code should explain each command.
 ```dockerfile
 FROM alpine:3.6
 
@@ -155,7 +155,7 @@ docker_build "aladdin-demo" "app/docker/aladdin-demo.Dockerfile" "."
 
 #aws login because we are pulling from ecr for base image
 $(aws --profile sandbox ecr get-login)
-docker_build "aladdin-demo-commands" "app/docker/aladdin-demo-commands.Dockerfile" "."
+docker_build "aladdin-demo-commands" "app/commands_app/Dockerfile" "."
 ```
 ### Helm 
 Helm charts are the main way to specify objects to create in Kubernetes. It is highly recommended that you take a look at the official [Helm Chart Template Guide](https://docs.helm.sh/chart_template_guide/), especially if you are unfamiliar with Kubernetes or Helm. It is well written and provides a good overview of what helm is capable of, as well as detailed documentation of sytax. It will help you understand the helm charts in this demo better and allow you to follow along with greater ease. We will also be referencing specific sections of the Helm guide in other parts of our documentation.
@@ -169,7 +169,7 @@ The Helm charts for this project are located in [helm/aladdin-demo](helm/aladdin
     version: 0.1.0
 
 #### Values.yaml
-Also in the root of the Helm directory is a [values.yaml](heml/aladdin-demo/values.yaml) file. This file defines a number of default values that may be overwritten by other environment specific values files. The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. **TODO add value files for other environments** 
+Also in the root of the Helm directory is a [values.yaml](helm/aladdin-demo/values.yaml) file. This file defines a number of default values that may be overwritten by other environment specific values files. The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. **TODO add value files for other environments** 
 ```yaml
 # Application configuration
 app:
@@ -194,16 +194,16 @@ The values in this file can be accessed in other files through {{ .Values.\<valu
 #### Templates
 The [templates](helm/aladdin-demo/templates/) directory is for template files. For our base project, we just need a Kubernetes Deployment object and Service object.
 
-In [aladdin-demo.deploy.yaml](helm/aladdin-demo/templates/aladdin-demo.deploy.yaml) we specify the Deployment object for the aladdin-demo app. The file contains a lot of different components for the integration of various other tools, but for the basic app, the deployment should look something like this. 
+In [server/deploy.yaml](helm/aladdin-demo/templates/server/deploy.yaml) we specify the Deployment object for the aladdin-demo app. The file contains a lot of different components for the integration of various other tools, but for the basic app, the deployment should look something like this. 
 ```yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}-server
   labels:
     project: {{ .Chart.Name }}
-    name: {{ .Chart.Name }}
-    app: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}-server
+    app: {{ .Chart.Name }}-server
     githash: {{ .Values.deploy.imageTag }}
 spec:
   replicas: {{ .Values.deploy.replicas }}
@@ -213,13 +213,13 @@ spec:
     metadata:
       labels:
         project: {{ .Chart.Name }}
-        name: {{ .Chart.Name }}
-        app: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}-server
+        app: {{ .Chart.Name }}-server
     spec:
       terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
       containers:
-        # This is a container that runs the falcon aladdin-demo app with uwsgi server
-      - name: {{ .Chart.Name }}
+        # This is a container that runs the falcon aladdin-demo-server app with uwsgi server
+      - name: {{ .Chart.Name }}-server
         # Docker image for this container
         image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
         workingDir: /home/{{ .Chart.Name}} 
@@ -242,16 +242,16 @@ We specify the image in spec.template.spec.containers. If using a custom built d
 
 We also mount the configmap for uwsgi using the cofiguration file guidelines specified in [Style Guidelines](docs/style_guidelines.md#configuration-files).
 
-In [aladdin-demo.service](helm/aladdin-demo/templates/aladdin-demo.service.yaml) we specify the Serivce object for aladdin-demo.
+In [aladdin-demo.service](helm/aladdin-demo/templates/server/service.yaml) we specify the Service object for aladdin-demo.
 ```yaml
 apiVersion: v1
 kind: Service
 metadata: 
-  name: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}-server
   labels:
     project: {{ .Chart.Name }}
-    name: {{ .Chart.Name }}
-    app: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}-server
+    app: {{ .Chart.Name }}-server
     githash: {{ .Values.deploy.imageTag }}
 spec:
   # Aladdin will fill this in as NodePort which will expose itself to things outside of the cluster
@@ -262,8 +262,8 @@ spec:
     - name: http
       port: {{ .Values.app.port }}
   selector:
-    # Get the aladdin-demo deployment configuration from aladdin-demo.deploy.yaml
-    name: {{ .Chart.Name }}
+    # Get the aladdin-demo-server deployment configuration from aladdin-demo/deploy.yaml
+    name: {{ .Chart.Name }}-server
 ```
 This file should be much simpler compared to the deployment file, since it just sets up a port, in this case a public NodePort and then through a selector, hooks up the deployment object so that it serves this port. 
 
@@ -281,7 +281,7 @@ app = falcon.API()
 
 app.add_route('/app', BaseResource())
 ```
-Our code is in `run.py` and we named our falcon API object `app`, so we specify those things in the uWSGI config file in [\_uwsgi.yaml.tpl](helm/aladdin-demo/templates/_uwsgi.yaml.tpl).
+Our code is in `run.py` and we named our falcon API object `app`, so we specify those things in the uWSGI config file in [\_uwsgi.yaml.tpl](helm/aladdin-demo/templates/server/_uwsgi.yaml.tpl).
 ```yaml
 {{ define "uwsgi-config" -}}
 uwsgi:

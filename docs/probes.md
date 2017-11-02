@@ -10,7 +10,7 @@ The [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-co
 
 The parameters are defined in [values.yaml](../helm/aladdin-demo/values.yaml).
 
-In the `aladdin-demo` container in [aladdin-demo.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo.deploy.yaml), we make an http request to the `ping` endpoint of the aladdin-demo app.
+In the `aladdin-demo` container in [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml), we make an http request to the `ping` endpoint of the aladdin-demo-server.
 ```yaml
 # Readiness probe stops traffic to this pod if it is not ready, wait until it is ready
 readinessProbe:
@@ -27,7 +27,7 @@ livenessProbe:
   initialDelaySeconds: {{ .Values.app.liveness.initalDelay }}
   periodSeconds: {{ .Values.app.readiness.period }}
 ```
-For the `redis` container in [aladdin-demo-redis.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo-redis.deploy.yaml), and the `elasticsearch` container in [aladdin-demo-elasticsearch.statefulset.yaml](../helm/aladdin-demo/templates/aladdin-demo-elasticsearch.statefulset.yaml), we try to open a TCP socket at the appropriate ports.
+For the `redis` container in [redis/deploy.yaml](../helm/aladdin-demo/templates/redis/deploy.yaml), and the `elasticsearch` container in [aladdin-demo-elasticsearch.statefulset.yaml](../helm/aladdin-demo/templates/elasticsearch/statefulset.yaml), we try to open a TCP socket at the appropriate ports.
 ```yaml
 
 readinessProbe:

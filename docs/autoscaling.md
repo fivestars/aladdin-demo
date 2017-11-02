@@ -5,7 +5,7 @@ In order to enable autoscaling, the first step is to make sure that Heapster is 
 
     $ minikube addons enable heapster
 
-Next, we need to request cpu resources in the deployment file of the pod we are autoscaling. For each container in [aladdin-demo.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo.deploy.yaml), we add
+Next, we need to request cpu resources in the deployment file of the pod we are autoscaling. For each container in [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml), we add
 ```yaml
 resources:
   requests:
@@ -13,7 +13,7 @@ resources:
 ``` 
 This is an optional field when not worrying about autoscaling, but it is required in order for the autoscaler to monitor percentage of cpu usage. In this example, we request 100 millicpu for each container. You can read more about what cpu means and how to manage other resources [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/). 
 
-Next, we create the HorizontalPodAutoscaler object in [aladdin-demo.hpa.yaml](../helm/aladdin-demo/templates/aladdin-demo.hpa.yaml).
+Next, we create the HorizontalPodAutoscaler object in [server/hpa.yaml](../helm/aladdin-demo/templates/server/aladdin-demo.hpa.yaml).
 ```yaml
 apiVersion: autoscaling/v1
 # This is an autoscaler for aladdin-demo
@@ -29,7 +29,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1beta1
     kind: Deployment
-    name: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}-server
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 50
@@ -52,18 +52,18 @@ Confirm that the aladdin-demo app is running. Then check the status of the autos
 
     $ kubectl get hpa
     NAME               REFERENCE                 TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
-    aladdin-demo-hpa   Deployment/aladdin-demo   0% / 50%   1         10        1          51m
+    aladdin-demo-hpa   Deployment/aladdin-demo-server   0% / 50%   1         10        1          51m
     
     $ kubectl get deployments
-    NAME                 DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-    aladdin-demo         1         1         1            1           51m
-    aladdin-demo-redis   1         1         1            1           51m
+    NAME                        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+    aladdin-demo-server         1         1         1            1           51m
+    aladdin-demo-redis          1         1         1            1           51m
     
 As expected, the CPU usage is well below the target 50%, so only one pod is needed.
 
-Now we can manually increase the load by generating an infinite number of requests to the aladdin-demo service. Get the url of the aladdin demo with
+Now we can manually increase the load by generating an infinite number of requests to the aladdin-demo-server service. Get the url of the aladdin demo server with
     
-    $ minikube service --url aladdin-demo
+    $ minikube service --url aladdin-demo-server
     <a url that looks something like http://192.168.99.100:30456>
 
 Then, in a new terminal window, run
@@ -78,12 +78,12 @@ This should return `busy busy...` ad infinitum. Let it run for about half a minu
 
     $ kubectl get hpa
     NAME               REFERENCE                 TARGETS      MINPODS   MAXPODS   REPLICAS   AGE
-    aladdin-demo-hpa   Deployment/aladdin-demo   182% / 50%   1         10        1          51m
+    aladdin-demo-hpa   Deployment/aladdin-demo-server   182% / 50%   1         10        1          51m
     
     $ kubectl get deployments
-    NAME                 DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-    aladdin-demo         4         4         4            4           51m
-    aladdin-demo-redis   1         1         1            1           51m
+    NAME                        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+    aladdin-demo-server         4         4         4            4           51m
+    aladdin-demo-redis          1         1         1            1           51m
     
 We see now that the CPU usage is much higher than the target, and as a result the autoscaler has scaled the number of desired pods up to 4 to balance the load. Hooray!
 
