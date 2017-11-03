@@ -50,10 +50,10 @@ With this subdirectory structure, the names of the yaml file no longer need to b
     - Chart.yaml
     - values.yaml
     - /values
-      - DEV.values.yaml
-      - STAG.values.yaml
-      - PROD.values.yaml
-      - LOCAL.values.yaml
+      - values.DEV.yaml
+      - values.STAG.yaml
+      - values.PROD.yaml
+      - values.LOCAL.yaml
     - /templates
       - /commands
         - deploy.yaml
