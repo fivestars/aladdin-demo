@@ -1,6 +1,4 @@
-# This is the default values file, which should be treated as a template. Values should only be defined
-# here if they are shared accross all non-local environments. However, list and comment on all potential values.
-
+# Values here will overwrite values.yaml defaults. These values are used when deploying locally to minikube
 # Application configuration
 app:
   # default to the python app port
@@ -15,16 +13,15 @@ deploy:
   replicas: 1
 
 redis:
-  create: #true
+  create: true
   port: 6379
   containerPort: 6379
 
 elasticsearch:
-  create: #true
-  populate: #true
-  # The elasticsearch config file is chown'd to the user of this id
+  create: true
+  populate: true
   # 1000 is the uid of the first non-root user created, in our case that is the elasticsearch user
-  id: #1000
-  port: #9200
-  containerPort: #9200
-  storage: #1Gi
+  id: 1000
+  port: 9200
+  containerPort: 9200
+  storage: 1Gi

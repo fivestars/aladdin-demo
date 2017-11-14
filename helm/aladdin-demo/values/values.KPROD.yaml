@@ -2,6 +2,7 @@
 
 elasticsearch:
   create: false
+  populate: false
 
 redis:
   create: false
