@@ -25,20 +25,25 @@ Aladdin currently only takes one build script, so there would still need a build
 - lamp.json
 - build
   - build_docker.sh
-- /server
+- project/
   - .dockerignore
   - requirements.txt
   - Dockerfile
   - entrypoint.sh
   - build_docker.sh
-  - /code stuff
-- /commands
-  - .dockerignore
-  - requirements.txt
-  - Dockerfile
-  - entrypoint.sh
-  - build_docker.sh
-  - /code stuff
+  - app/
+    - code stuff
+  - test/
+    - requriements.txt
+    - Dockerfile
+    - code stuff/
+  - commands/
+    - .dockerignore
+    - requirements.txt
+    - Dockerfile
+    - entrypoint.sh
+    - build_docker.sh
+    - code stuff/
 - /helm
 ### Helm Files
 The recommended Helm directory structure is demonstrated below, with /helm at the root. Notably, within the /templates folder, have subdirectories for files specific to each component of the project, as well as a shared directory for shared files such as configMaps.
