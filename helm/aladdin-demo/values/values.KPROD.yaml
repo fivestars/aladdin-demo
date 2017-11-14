@@ -1,0 +1,8 @@
+# Values here will overwrite values.yaml defaults. These values are used when deploying to KPROD cluster
+
+elasticsearch:
+  create: false
+  populate: false
+
+redis:
+  create: false
