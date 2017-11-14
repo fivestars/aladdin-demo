@@ -2,7 +2,7 @@
 
 Aladdin allows project-specific commands to be managed and implemented within the project repository. These commands can be run independently/directly, or from within aladdin through `aladdin cmd <project name> <command name>`. To do this, we will spin up a dedicated commands pod that is specific to each project. 
 
-In this template project, we demonstrate a simple `status` command, which will ping the relevant endpoints for aladdin-demo and print out each of their statuses. Running `kubectl get pods` should show that `aladdin-demo-commands-<hash>` is running alongside the `aladdin-demo` pods. The status command can be run using aladdin with:
+In this template project, we demonstrate a simple `status` command, which will ping the relevant endpoints for aladdin-demo and print out each of their statuses. Running `kubectl get pods` should show that `aladdin-demo-commands-<hash>` is running alongside the other `aladdin-demo` pods. The status command can be run using aladdin with:
     
     $ aladdin cmd aladdin-demo status
 
@@ -21,7 +21,7 @@ def print_status(arg):
 ```
 ## Create Docker Container
 
-We will also need to create a Dockerfile for this container. The image for this commands container must be inherited from the aladdin `commands_base` docker image, and copy over the folder containing the command functions as `command`. We demonstrate this in [aladdin-demo-commands.Dockerfile](../app/docker/aladdin-demo-commands.Dockerfile). 
+We will also need to create a Dockerfile for this container. The image for this commands container must be inherited from the aladdin `commands_base` docker image, and copy over the folder containing the command functions as `command`. We demonstrate this in the [Dockerfile](../app/commands_app/Dockerfile). 
 ```Dockerfile
 FROM 281649891004.dkr.ecr.us-east-1.amazonaws.com/aladdin:commands_base
 ...
@@ -30,10 +30,10 @@ COPY app/commands_app/commands commands
 Update the [build docker script](../build/build_docker.sh) to build the commands container as well.
 
 ```shell
-docker_build "aladdin-demo-commands" "app/docker/aladdin-demo-commands.Dockerfile" "."
+docker_build "aladdin-demo-commands" "app/commands_app/Dockerfile" "."
 ```
 ## Create Kubernetes Deploy File
-We create [aladdin-demo-commands.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo-commands.deploy.yaml).
+We create [commands/deploy.yaml](../helm/aladdin-demo/templates/commands/deploy.yaml).
 
 ## Update lamp.json
 Include the commands container image in `docker_images`.

@@ -23,7 +23,7 @@ The `id` field here refers to the uid of the `elasticsearch` user in the docker 
 
 The `storage` field specifies how much storage we want to provision for the Persistent Volumes. Here it is 1 Gigabyte. 
 
-We will use the officially supported elasticsearch docker image and define and load in the configuration for this elasticsearch image following the [Style Guidelines](style_guidelines.md). The config file is defined in [\_elasticsearch.yml.tpl](../heml/aladdin-demo/templates/_elasticsearch.yml.tpl) with a few notable settings highlighted in the comments.
+We will use the officially supported elasticsearch docker image and define and load in the configuration for this elasticsearch image following the [Style Guidelines](style_guidelines.md). The config file is defined in [\_elasticsearch.yml.tpl](../helm/aladdin-demo/templates/elasticsearch/_elasticsearch.yml.tpl) with a few notable settings highlighted in the comments.
 
     {{/* Config file for elasticsearch */}}
 
@@ -52,9 +52,9 @@ We will use the officially supported elasticsearch docker image and define and l
     network.host: 0.0.0.0
     {{ end }}
 
-We then create a Kubernetes Service object in [aladdin-demo-elasticsearch.service.yaml](../helm/aladdin-demo/templates/aladdin-demo-elasticsearch.service.yaml). This should look pretty simple and standard, the one **important difference** is that we need to set `spec.clusterIP: None`, making this a [Headless Service](https://kubernetes.io/docs/concepts/services-networking/service/), which is required for using with a StatefulSet. 
+We then create a Kubernetes Service object in [elasticsearch/service.yaml](../helm/aladdin-demo/templates/elasticsearch/service.yaml). This should look pretty simple and standard, the one **important difference** is that we need to set `spec.clusterIP: None`, making this a [Headless Service](https://kubernetes.io/docs/concepts/services-networking/service/), which is required for using with a StatefulSet. 
 
-We create the StatefulSet object in [aladdin-demo-elasticsearch.statefulset.yaml](../helm/aladdin-demo/templates/aladidn-demo-elasticsearch.statefulset.yaml). There are a lot of components to this file, but let us take a detailed look at each one.
+We create the StatefulSet object in [elasticsearch/statefulset.yaml](../helm/aladdin-demo/templates/elasticsearch/statefulset.yaml). There are a lot of components to this file, but let us take a detailed look at each one.
 
 At the very bottom, we define the volumeClaimTemplates, which specifies what a PersistentVolume for this StatefulSet needs to be like. The Aladdin minikube should be set up such that it will dynamically provision the appropriate PeristentVolumes if they do not already exist, and the pod should be able to find the correct PersistenVolume if it has already been allocated to it. 
 
@@ -176,7 +176,7 @@ In [run.py](../app/run.py) we add another resource which will get the message fr
       app.add_route('/app/elasticsearch', ElasticsearchResource())
  
 ### Application initContainers
-Finally, we want to make sure that our app doesn't start before the elasticsearch service is ready. We add two initContainers to check and populate elasticsearch in [\_elasticsearch_init.tpl.yaml](../helm/aladdin-demo/templates/_elasticsearch_init.tpl.yaml).
+Finally, we want to make sure that our app doesn't start before the elasticsearch service is ready. We add two initContainers to check and populate elasticsearch in [\_elasticsearch_init.tpl.yaml](../helm/aladdin-demo/templates/elasticsearch/_elasticsearch_init.tpl.yaml).
 
     {{ define "elasticsearch_check" -}}
     {{ if .Values.elasticsearch.create }}
@@ -204,18 +204,18 @@ Finally, we want to make sure that our app doesn't start before the elasticsearc
     {{ end }}
     {{ end }}
 
-We include these initContainers in [aladdin-demo.deploy.yaml](../helm/aladdin-demo/templates/aladdin-demo.deploy.yaml). Since we are using persistent volume for data storage, we should only need to populate the data once, so the population initContainer is controlled by a `elasticsearch.populate` boolean specified in [values.yaml](../heml/aladdin-demo/values.yaml).
+We include these initContainers in [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml). Since we are using persistent volume for data storage, we should only need to populate the data once, so the population initContainer is controlled by a `elasticsearch.populate` boolean specified in [values.yaml](../helm/aladdin-demo/values.yaml).
 
 ## Test Persistency
-Make sure that `elasticsearch.create` and `elasticsearch.populate` are set to `true` in [values.yaml](../heml/aladdin-demo/values.yaml). Build and deploy aladdin-demo and wait until all the pods are running.
+Make sure that `elasticsearch.create` and `elasticsearch.populate` are set to `true` in [values.yaml](../helm/aladdin-demo/values.yaml). Build and deploy aladdin-demo and wait until all the pods are running.
 
     $ aladdin build
     $ aladdin start
     $ kubectl get pods
 
-Check that elasticsearch has been populated by curling the appropriate endpoint of the aladdin-demo service.
+Check that elasticsearch has been populated by curling the appropriate endpoint of the aladdin-demo service-server.
 
-    $ curl $(minikube service --url aladdin-demo)/app/elasticsearch
+    $ curl $(minikube service --url aladdin-demo-server)/app/elasticsearch
     
     Data from ElasticSearch is {"author": "Aladdin", "song": "A Whole New World", "lyrics": ["I can show you the world"], "awesomeness": 42} 
     

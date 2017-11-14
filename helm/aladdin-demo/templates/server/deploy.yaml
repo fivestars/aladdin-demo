@@ -1,11 +1,11 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}-server
   labels:
     project: {{ .Chart.Name }}
-    name: {{ .Chart.Name }}
-    app: {{ .Chart.Name }}
+    name: {{ .Chart.Name }}-server
+    app: {{ .Chart.Name }}-server
     githash: {{ .Values.deploy.imageTag }}
 spec:
   replicas: {{ .Values.deploy.replicas }}
@@ -15,8 +15,8 @@ spec:
     metadata:
       labels:
         project: {{ .Chart.Name }}
-        name: {{ .Chart.Name }}
-        app: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}-server
+        app: {{ .Chart.Name }}-server
     spec:
       # Number of seconds for the containers to perform a graceful shutdown,
       # after which it is voilently terminated. This defaults to 30s, most apps may not need to change it
@@ -25,10 +25,10 @@ spec:
       imagePullSecrets:
         - name: aws
       containers:
-############# aladdin-demo app container ####
+############# aladdin-demo-uwsgi app container ####
 ## This is a container that runs the falcon aladdin-demo app with uwsgi server
 #############################################
-      - name: {{ .Chart.Name }}
+      - name: {{ .Chart.Name }}-uwsgi
         # Docker image for this container
         image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}:{{ .Values.deploy.imageTag }}
         workingDir: /home
@@ -44,7 +44,7 @@ spec:
             subPath: uwsgi.yaml
 {{ if .Values.deploy.withMount }}
           - mountPath: /home
-            name: {{ .Chart.Name }}
+            name: {{ .Chart.Name }}-server
 {{ end }} # /withMount
         envFrom:
           # Load the data from configMap into the runtime environment
@@ -139,7 +139,7 @@ spec:
           emptyDir: {}
 {{ end }}
 {{ if .Values.deploy.withMount }}
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-server
           hostPath:
             path: {{ .Values.deploy.mountPath }}/app
 {{ end }} # /withMount

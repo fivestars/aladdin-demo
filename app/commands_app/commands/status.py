@@ -15,22 +15,22 @@ def parse_args(sub_parser):
 
 def print_status(arg):
     """ Prints the status of the aladdin-demo pod and the redis pod """
-    print_aladdin_demo_status()
+    print_aladdin_demo_server_status()
     print_redis_status()
     print_elasticsearch_status()
 
 
-def print_aladdin_demo_status():
-    print("pinging aladdin-demo ...")
+def print_aladdin_demo_server_status():
+    print("pinging aladdin-demo-server ...")
     host = os.environ["ALADDIN_DEMO_SERVICE_HOST"]
     port = os.environ["ALADDIN_DEMO_SERVICE_PORT"]
     url = "http://{}:{}/ping".format(host, port)
     try:
         r = requests.get(url)
         if r.status_code == 200:
-            print("aladdin demo endpoint ping successful")
+            print("aladdin demo server endpoint ping successful")
         else:
-            print("aladdin demo endpoint ping returned with status code {}".format(r.status_code))
+            print("aladdin demo server endpoint ping returned with status code {}".format(r.status_code))
     except requests.exceptions.ConnectionError as e:
         print("aladdin demo endpoint connection error: {}".format(e))
 
