@@ -169,7 +169,7 @@ The Helm charts for this project are located in [helm/aladdin-demo](helm/aladdin
     version: 0.1.0
 
 #### Values.yaml
-Also in the root of the Helm directory is a [values.yaml](helm/aladdin-demo/values.yaml) file. This file defines a number of default values that may be overwritten by other environment specific values files. The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. **TODO add value files for other environments** 
+Also in the root of the Helm directory is a [values.yaml](heml/aladdin-demo/values.yaml) file. This file defines a number of default values that may be overwritten by other environment specific values files.
 ```yaml
 # Application configuration
 app:
@@ -191,6 +191,7 @@ redis:
 ```
 The values in this file can be accessed in other files through {{ .Values.\<value\> }}. For example, {{ .Values.app.port }} will resolve to 7892.
 
+The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. It is common practice to have multiple environments, such as local, dev, staging, and prod, which may require different parameters to be set. In our example, we will use KDEV, KSTAG, and KPROD as three different Kubernetes clusters, and we put their respective values files in a separate [values](../helm/aladdin-demo/values) folder that Aladdin can find when running on that cluster. See the aladdin documentation for more detail on how to run in non-local environments.
 #### Templates
 The [templates](helm/aladdin-demo/templates/) directory is for template files. For our base project, we just need a Kubernetes Deployment object and Service object.
 
