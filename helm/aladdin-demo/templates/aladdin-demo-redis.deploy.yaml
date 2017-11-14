@@ -23,4 +23,18 @@ spec:
         ports:
         - containerPort: {{ .Values.redis.containerPort }}
           protocol: TCP
+        {{ if .Values.redis.readiness.use }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.redis.port }}
+          initialDelaySeconds: {{ .Values.redis.readiness.initalDelay }}
+          periodSeconds: {{ .Values.redis.readiness.period }}
+        {{ end }}
+        {{ if .Values.redis.liveness.use }}
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.redis.port }}
+          initialDelaySeconds: {{ .Values.redis.liveness.initalDelay }}
+          periodSeconds: {{ .Values.redis.liveness.period }}
+        {{ end }}
 {{end}}

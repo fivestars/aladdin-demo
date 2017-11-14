@@ -8,6 +8,18 @@ app:
   nginx:
     use: true
     port: 8001
+  # liveness probe will restart the pod if it detects that it is unhealty
+  liveness:
+    use: true
+    # number of seconds before the first probe
+    initialDelay: 15
+    # number of seconds for frequency between probes
+    period: 120
+  # readiness probe will hold off traffic and wait until the pod is ready
+  readiness:
+    use: true
+    initialDelay: 5
+    period: 60
 
 deploy:
   # number of seconds for the containers to perform a graceful shutdown, after which it is voilently terminated
@@ -18,6 +30,14 @@ redis:
   create: #true
   port: 6379
   containerPort: 6379
+  liveness:
+    use: #true
+    initialDelay: 10
+    period: 15
+  readiness:
+    use: #true
+    initialDelay: 5
+    period: 10
 
 elasticsearch:
   create: #true
@@ -28,3 +48,12 @@ elasticsearch:
   port: #9200
   containerPort: #9200
   storage: #1Gi
+  liveness:
+    use: #true
+    initialDelay: 10
+    period: 60
+  readiness:
+    use: #true
+    initialDelay: 10
+    period: 30
+
