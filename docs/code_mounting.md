@@ -64,6 +64,8 @@ Then, we can reference the claim in our container volume, and use the correct su
 {{ end }} # /withMount
 ```
 
+Once you have set this up correctly, you will also need to update your /etc/exports by running `echo "/Users -alldirs -mapall="$(id -u)":"$(id -g)" $(minikube ip)"| sudo tee -a /etc/exports` to give minikube access to it.  
+
 ## Option 2
 
 Here we are mounting the app folder in the aladdin-demo directory from our host machine onto the /home path on the aladdin-demo container. 
