@@ -45,6 +45,7 @@ spec:
 {{ if .Values.deploy.withMount }}
           - mountPath: /home
             name: {{ .Chart.Name }}-server
+            subPath: app
 {{ end }} # /withMount
         envFrom:
           # Load the data from configMap into the runtime environment
@@ -140,6 +141,6 @@ spec:
 {{ end }}
 {{ if .Values.deploy.withMount }}
         - name: {{ .Chart.Name }}-server
-          hostPath:
-            path: {{ .Values.deploy.mountPath }}/app
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-nfs-volume-claim
 {{ end }} # /withMount
