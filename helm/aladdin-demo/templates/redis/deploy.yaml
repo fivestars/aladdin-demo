@@ -27,14 +27,14 @@ spec:
         readinessProbe:
           tcpSocket:
             port: {{ .Values.redis.port }}
-          initialDelaySeconds: {{ .Values.redis.readiness.initalDelay }}
+          initialDelaySeconds: {{ .Values.redis.readiness.initialDelay }}
           periodSeconds: {{ .Values.redis.readiness.period }}
         {{ end }}
         {{ if .Values.redis.liveness.use }}
         livenessProbe:
           tcpSocket:
             port: {{ .Values.redis.port }}
-          initialDelaySeconds: {{ .Values.redis.liveness.initalDelay }}
+          initialDelaySeconds: {{ .Values.redis.liveness.initialDelay }}
           periodSeconds: {{ .Values.redis.liveness.period }}
         {{ end }}
 {{end}}

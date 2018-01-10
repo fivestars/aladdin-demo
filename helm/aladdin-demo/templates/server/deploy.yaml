@@ -61,7 +61,7 @@ spec:
           httpGet:
             path: /ping
             port: {{ .Values.app.port }}
-          initialDelaySeconds: {{ .Values.app.readiness.initalDelay }}
+          initialDelaySeconds: {{ .Values.app.readiness.initialDelay }}
           periodSeconds: {{ .Values.app.readiness.period }}
         {{ end }} # /app.readiness.use
         # Liveness probe terminates and restarts the pod if unhealthy
@@ -70,7 +70,7 @@ spec:
           httpGet:
             path: /ping
             port: {{ .Values.app.port }}
-          initialDelaySeconds: {{ .Values.app.liveness.initalDelay }}
+          initialDelaySeconds: {{ .Values.app.liveness.initialDelay }}
           periodSeconds: {{ .Values.app.readiness.period }}
         {{ end }} # /app.liveness.use
 ############# nginx server container ########
