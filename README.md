@@ -302,6 +302,7 @@ With these components in place, we have now created a simple project with Aladdi
 - [Code_Mounting](docs/code_mounting.md)
 - [CommandsContainers](docs/commands_containers.md)
 - [InitContainers](docs/init_containers.md)
+- [Jobs and Cronjobs](docs/jobs_and_cronjobs.md)
 - [Liveness and Readiness Probes](docs/probes)
 - [Using Nginx](docs/nginx.md)
 - [Using Redis](docs/redis.md)
