@@ -68,14 +68,14 @@ spec:
         readinessProbe:
           tcpSocket:
             port: {{ .Values.elasticsearch.port }}
-          initialDelaySeconds: {{ .Values.elasticsearch.readiness.initalDelay }}
+          initialDelaySeconds: {{ .Values.elasticsearch.readiness.initialDelay }}
           periodSeconds: {{ .Values.elasticsearch.readiness.period }}
         {{ end }}
         {{ if .Values.elasticsearch.liveness.use }}
         livenessProbe:
           tcpSocket:
             port: {{ .Values.elasticsearch.port }}
-          initialDelaySeconds: {{ .Values.elasticsearch.liveness.initalDelay }}
+          initialDelaySeconds: {{ .Values.elasticsearch.liveness.initialDelay }}
           periodSeconds: {{ .Values.elasticsearch.liveness.period }}
         {{ end }}
       volumes:
