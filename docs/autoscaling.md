@@ -1,9 +1,11 @@
 # Autoscaling
-Kubernetes provides autoscaling by CPU usage through a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). We give a simple demonstration of it in this demo project.
+Kubernetes provides autoscaling by CPU usage through a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). We give a simple demonstration of it in this demo project. As of Kubernetes 1.8, autoscaling by custom metrics is also available with autoscaling v2beta1. This requires setting up some extra metrics and we will not go over it in this demo.
 
-In order to enable autoscaling, the first step is to make sure that Heapster is enabled. We should have it deployed in all non-local environments, but if you are running this locally with minikube, you will need to manually enable it with
+In Kubernetes 1.8, Heapster is being deprecated and will be replaced with Metrics-Server. In order to enable autoscaling, we must ensure that metrics-server is running. We should have it deployed in all non-local environments, but if you are running this locally with minikube, you will need to manually deploy it. You can deploy it with aladdin by cloning the aladdinized metrics-server repo from https://github.com/fivestars/metrics-server and running
 
-    $ minikube addons enable heapster
+    $ aladdin start
+
+More information about metrics-server can be found [here](https://github.com/kubernetes-incubator/metrics-server)
 
 Next, we need to request cpu resources in the deployment file of the pod we are autoscaling. For each container in [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml), we add
 ```yaml
@@ -15,7 +17,7 @@ This is an optional field when not worrying about autoscaling, but it is require
 
 Next, we create the HorizontalPodAutoscaler object in [server/hpa.yaml](../helm/aladdin-demo/templates/server/aladdin-demo.hpa.yaml).
 ```yaml
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta1
 # This is an autoscaler for aladdin-demo
 kind: HorizontalPodAutoscaler
 metadata:
@@ -32,9 +34,13 @@ spec:
     name: {{ .Chart.Name }}-server
   minReplicas: 1
   maxReplicas: 10
-  targetCPUUtilizationPercentage: 50
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 50
 ```
-If the cpu utilization percentage of a pod exceeds 50%, the autoscaler will spin up new pods until each pod has a below 50% cpu utilization. This utilization percentage is quite low for purposes of demonstration. By default, autoscaler will check on the pods every 30 seconds. This can be changed through the controller manager's `--horizontal-pod-autoscaler-sync-period` flag.
+If the average cpu utilization percentage of all aladdin-demo-server pods exceeds 50%, the autoscaler will spin up new pods until the pods have less than 50% average cpu utilization. This utilization percentage is quite low for purposes of demonstration. By default, autoscaler will check on the pods every 30 seconds. This can be changed through the controller manager's `--horizontal-pod-autoscaler-sync-period` flag.
 
 We also add a `BusyResource` in [run.py](../app/run.py), which performs a CPU intensive operation upon get request to force autoscaling.
 ```python

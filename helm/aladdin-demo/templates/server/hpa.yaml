@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta1
 # This is an autoscaler for aladdin-demo
 kind: HorizontalPodAutoscaler
 metadata:
@@ -19,4 +19,8 @@ spec:
   # the controller manager's --horizontal-pod-autoscaler-sync-period flag.
   minReplicas: 1
   maxReplicas: 10
-  targetCPUUtilizationPercentage: 50
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 50
