@@ -1,4 +1,4 @@
-# Values here will overwrite values.yaml defaults. These values are used when deploying to KDEV cluster under the awesomestartup namespace
+# Values here will overwrite values.yaml defaults. These values are used when deploying to KDEV cluster under the awesomestartup namest
 
 # Usually you will want to create your own instance of elasticsearch on dev, but if you are backing
 # it with a statefulset, you will need to manually provision the peristent volume beforehand and
@@ -6,6 +6,10 @@
 elasticsearch:
   create: false
 
+redis:
+  create: true
+
+affinity: critical-datadog-apm
 # Environment variables that loaded into a config map and set at run time
 env:
   DATADOG_ENV: awesomestartup
