@@ -49,3 +49,7 @@ elasticsearch:
     use: true
     initialDelay: 10
     period: 30
+
+# Environment variables that loaded into a config map and set at run time
+env:
+  DATADOG_ENV: local-hope

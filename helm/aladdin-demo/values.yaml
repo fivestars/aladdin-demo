@@ -57,3 +57,7 @@ elasticsearch:
     initialDelay: 10
     period: 30
 
+# Environment variables that loaded into a config map and set at run time
+affinity: critical-datadog-apm
+env:
+  DATADOG_TRACE_AGENT_HOSTNAME: datadog-agent-apm.kube-system

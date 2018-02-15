@@ -24,6 +24,9 @@ spec:
       # This is needed when pulling from our ecr repo
       imagePullSecrets:
         - name: aws
+      # Only schedule pods on nodes with the affinity: critical-datadog-apm label
+      nodeSelector:
+        affinity: {{ .Values.affinity }}
       containers:
 ############# aladdin-demo-uwsgi app container ####
 ## This is a container that runs the falcon aladdin-demo app with uwsgi server
