@@ -1,3 +1,3 @@
 #!/bin/sh
 
-uwsgi /home/config/uwsgi.yaml
+uwsgi /config/uwsgi.yaml
