@@ -39,7 +39,7 @@ spec:
         # Mount the configuration file into the docker container
         volumeMounts:
           # Absolute path is used here
-          - mountPath: /home/config/uwsgi.yaml
+          - mountPath: /config/uwsgi.yaml
             name: {{ .Chart.Name }}-uwsgi
             subPath: uwsgi.yaml
 {{ if .Values.deploy.withMount }}
