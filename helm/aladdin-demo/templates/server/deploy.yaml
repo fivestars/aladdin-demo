@@ -25,8 +25,10 @@ spec:
       imagePullSecrets:
         - name: aws
       # Only schedule pods on nodes with the affinity: critical-datadog-apm label
+      {{ if .Values.affinity }}
       nodeSelector:
         affinity: {{ .Values.affinity }}
+      {{ end }}
       containers:
 ############# aladdin-demo-uwsgi app container ####
 ## This is a container that runs the falcon aladdin-demo app with uwsgi server
