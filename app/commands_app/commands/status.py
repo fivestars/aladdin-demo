@@ -22,8 +22,8 @@ def print_status(arg):
 
 def print_aladdin_demo_server_status():
     print("pinging aladdin-demo-server ...")
-    host = os.environ["ALADDIN_DEMO_SERVICE_HOST"]
-    port = os.environ["ALADDIN_DEMO_SERVICE_PORT"]
+    host = os.environ["ALADDIN_DEMO_SERVER_SERVICE_HOST"]
+    port = os.environ["ALADDIN_DEMO_SERVER_SERVICE_PORT"]
     url = "http://{}:{}/ping".format(host, port)
     try:
         r = requests.get(url)
