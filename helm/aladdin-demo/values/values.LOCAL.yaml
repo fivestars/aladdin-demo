@@ -52,4 +52,4 @@ elasticsearch:
 
 # Environment variables that loaded into a config map and set at run time
 env:
-  DATADOG_ENV: local-hope
+  DATADOG_ENV: local
