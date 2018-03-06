@@ -16,7 +16,7 @@ data:
   ELASTICSEARCH_HOST: {{ .Chart.Name }}-elasticsearch
   ELASTICSEARCH_PORT: {{ .Values.elasticsearch.port | quote }}
 # datadog environment variables
-  APM_ENABLED: {{ .Values.apm.enabled }}
-  DATADOG_SERVICE_NAME: {{ .Chart.Name }}
-  DATADOG_ENV: {{ .Values.apm.datadog_env }}
-  DATADOG_TRACE_AGENT_HOSTNAME: {{ .Values.apm.datadog_trace_agent_hostname }}
+  APM_ENABLED: {{ .Values.apm.enable | quote }}
+  DATADOG_SERVICE_NAME: {{ .Chart.Name | quote }}
+  DATADOG_ENV: {{ .Values.apm.datadog_env | quote }}
+  DATADOG_TRACE_AGENT_HOSTNAME: {{ .Values.apm.datadog_trace_agent_hostname | quote }}
