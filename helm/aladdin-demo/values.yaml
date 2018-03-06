@@ -21,6 +21,12 @@ app:
     initialDelay: 5
     period: 60
 
+# Configurations for setting up apm tracing
+apm:
+  enable: false
+  datadog_trace_agent_hostname: datadog-agent.kube-system
+  datadog_env:
+
 deploy:
   # number of seconds for the containers to perform a graceful shutdown, after which it is voilently terminated
   terminationGracePeriod: 50
@@ -56,7 +62,3 @@ elasticsearch:
     # use: true
     initialDelay: 10
     period: 30
-
-# Environment variables that loaded into a config map and set at run time
-env:
-  DATADOG_TRACE_AGENT_HOSTNAME: datadog-agent.kube-system
