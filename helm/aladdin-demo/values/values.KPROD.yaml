@@ -6,3 +6,9 @@ elasticsearch:
 
 redis:
   create: false
+
+# Configurations for setting up apm tracing
+apm:
+  enable: true
+  datadog_env: prod
+affinity: critical-datadog-apm

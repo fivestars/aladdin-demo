@@ -15,6 +15,11 @@ app:
     initialDelay: 5
     period: 60
 
+# Configurations for setting up apm tracing
+apm:
+  enable: false
+  datadog_env: local
+
 deploy:
   # number of seconds for the containers to perform a graceful shutdown, after which it is voilently terminated
   terminationGracePeriod: 50

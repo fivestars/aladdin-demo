@@ -5,3 +5,12 @@
 # make sure the statefulset pod has the correct affinity. See elasticsearch_statefulset.md for more information.
 elasticsearch:
   create: false
+
+redis:
+  create: true
+
+# Configurations for setting up apm tracing
+apm:
+  enable: false
+  datadog_env: dev
+affinity: critical-datadog-apm
