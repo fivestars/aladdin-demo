@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if $APM_ENABLED; then
-    echo "APM tracing enabled: $APM_APP_NAME"
+    echo "APM tracing enabled: $DATADOG_SERVICE_NAME"
     # start our server through ddtrace-run, which will allow us to see apm tracing in datadog
     ddtrace-run uwsgi /config/uwsgi.yaml
 else
