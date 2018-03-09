@@ -60,6 +60,10 @@ spec:
         resources:
           requests:
             cpu: 100m
+            memory: 8Mi
+          limits:
+            cpu: 200m
+            memory: 16Mi
         {{ if .Values.app.readiness.use }}
         # Readiness probe stops traffic to this pod if it is not ready, wait until it is ready
         readinessProbe:
