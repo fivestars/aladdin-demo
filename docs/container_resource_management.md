@@ -24,4 +24,6 @@ The `request` above is essentially telling the kubernetes scheduler that this po
 
 The `limit` above puts a cap on the amount of resources the pod can consume. It allows the pod to be throttled if it starts using more than 200m CPU. If the pod uses more than 16Mi of memory, the scheduler will kill the pod and attempt to restart it. This prevents cases where a single pod is hogging all the resources, which could lead to other pods being throttled or evicted. 
 
+It is important to note that if a container specifies a resource `limit` but not a resource `request`, then the container's `request` is set to match its `limit`.
+
 This [Medium article](https://medium.com/retailmenot-engineering/what-happens-when-a-kubernetes-pod-uses-too-much-memory-or-too-much-cpu-82165022f489) gives a great walkthrough example of what happens when a kubernetes pod uses too much memory or CPU, and how using resource requests and limits reduce the negative impact.
