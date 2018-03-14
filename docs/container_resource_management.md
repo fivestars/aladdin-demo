@@ -1,5 +1,5 @@
 # Container Resource Management
-Containers on a Pod are scheduled on noded in your cluster, which has a limited amount of CPU and memory. If you do not specify how many resources you expect your pod to need to use, it can lead to situations where the pod is unable to provide sufficient computing resources and in the worst cases can cause an entire node to be unavailabe. 
+Containers on a Pod are scheduled on node in your cluster, which has a limited amount of CPU and memory. If you do not specify how much resource you expect your pod to need to use, it can lead to situations where the node is unable to provide sufficient computing resources and in the worst cases can bring down an entire node. 
 
 From the [Kubernetes Documentation on Resources](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/)
 
@@ -20,7 +20,7 @@ resources:
 
 You can read more about what the cpu and memory units mean [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-cpu). 
 
-The `request` above is essentially telling the kubernetes scheduler that this pod needs at least 100 millicores of CPU and 8MiB of memory. The scheduler will look at the requests of all the pods currently scheduled on a node, and will only schedule this pod if the node has at least 100m CPU and 8MiB of memory free. Note that this does not take into account how much resource the pods are actually consuming, only the request it has specified. This ensures that all pods have suficient resources when being scheduled.
+The `request` above is essentially telling the kubernetes scheduler that this pod needs at least 100 millicores of CPU and 8MiB of memory. The scheduler will look at the requests of all the pods currently scheduled on a node, and will only schedule this pod if the node has at least 100m CPU and 8MiB of memory free. Note that this does not take into account how much resource the pods are actually consuming, only the request it has specified. This tries to ensure that all pods have suficient resources when being scheduled.
 
 The `limit` above puts a cap on the amount of resources the pod can consume. It allows the pod to be throttled if it starts using more than 200m CPU. If the pod uses more than 16Mi of memory, the scheduler will kill the pod and attempt to restart it. This prevents cases where a single pod is hogging all the resources, which could lead to other pods being throttled or evicted. 
 
