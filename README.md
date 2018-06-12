@@ -1,36 +1,12 @@
-# Aladdin Installation
-
-## What is Aladdin
-
-**TODO:** Blurb
-
-## Aladdin Setup
-
-This section describes how to get Kubernetes setup and verify that it is working. This includes installing Minikube, which is used for local development in Kubernetes. 
-
-To set up, just clone the Aladdin GitHub repository to get started **TODO:** Confirm once we have public git repository
-
-    $ git clone git@github.com/aladdin/aladdin.git
-    $ cd aladdin
-    $ ./scripts/infra_k8s_check.sh
-
-The `infra_k8s_check.sh` script checks to see if everything necessary is installed in order to enable local development for various projects and to enable deploying to different environments. 
-- If you are missing any dependencies, the script will try and install them for you. 
-- This script is also run every time you run the ./aladdin.sh script (more about that script in the Installing our Projects section). 
-- __Important:__ Note that this tries to install specific versions of Docker, Virtual Box, Minikube, Kubectl, and Helm that are known to work with Aladdin. If you do not want this script to override the version you already have, you will want to alter the versions in the scripts/infra_k8s_check.sh file. However, if you do this, we can not guarantee the behavior of Aladdin. 
-
-You can add Aladdin to your path as a global alias, allowing you to directly call on aladdin for upcoming commands. You may wish to edit your .bashrc or .bash_profile to execute this command every time you start up a new terminal. 
-
-    $ eval $(./aladdin.sh env) 
-
-**TODO:**[Our common issues page]
- 
-# Building a Project
+# About the Aladdin-demo Project
 The aladdin-demo is a template project that will demonstrate how to write an aladdin-compatible project. If you are creating a new project from scratch, it is recommended that you start with this template, which already provides simple integration with uWSGI, Falcon, NGINX, Redis, and Elasticsearch. This document will provide a detailed walkthrough of aladdin-demo, explaining each component and best practice guidelines in project development.
 
-## Aladdin-demo Setup
+# Building the Aladdin-demo Project
+Pre-requisite: if you are here, it is assumed that you've already installed and set up Aladdin (https://github.com/fivestars/aladdin-fs)
 
-Once Aladdin has been installed and set up, you can jump right in to aladdin-demo to see Aladdin in action. 
+## Setup
+
+You can jump right in to aladdin-demo to see Aladdin in action. 
 
     $ git clone git@github.com:fivestars/aladdin-demo.git
     $ cd aladdin-demo
@@ -298,7 +274,7 @@ With these components in place, we have now created a simple project with Aladdi
 
 ## Useful and Important Documentation
 - [Style Guidelines](docs/style_guidelines.md)
-- [Debugging Tips and Tricks](docs/debugging_tips_and_tricks.md)
+- [Debugging Tips and Tricks](docs/debugging_tip_and_tricks.md)
 - [Code_Mounting](docs/code_mounting.md)
 - [CommandsContainers](docs/commands_containers.md)
 - [InitContainers](docs/init_containers.md)
