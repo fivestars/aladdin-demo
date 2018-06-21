@@ -1,12 +1,14 @@
 # Using NGINX
 We demonstrate running an nginx container within the same pod as the aladdin-demo-server app. Our template sets up nginx as a simple proxy server that will listen to all traffic on a port and forward it to the falcon app. We specify the nginx values in the [values.yaml](../helm/aladdin-demo/values.yaml) file.
 ```yaml
-  app:
-    # default to the python app port
-    port: 7892
-    nginx:
-      use: false
-      port: 8001
+app:
+  uwsgi:
+    port: 8000
+  nginx:
+    use: true
+    port: 80
+    httpPort: 80
+    httpsPort: 443
 ```       
 Set the `use` field to `true`. This is all you need to do to see nginx work, you can verify this by restarting the app with `aladdin start`. Navigate to the aladdin-demo-server service pod in the Kubernetes dashboard and you should be able to see two containers running. Read on for how we did it. 
 

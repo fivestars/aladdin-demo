@@ -16,14 +16,14 @@ In the `aladdin-demo` container in [server/deploy.yaml](../helm/aladdin-demo/tem
 readinessProbe:
   httpGet:
     path: /ping
-    port: {{ .Values.app.port }}
+    port: {{ .Values.app.uwsgi.port }}
   initialDelaySeconds: {{ .Values.app.readiness.initalDelay }}
   periodSeconds: {{ .Values.app.readiness.period }}
 # Liveness probe terminates and restarts the pod if unhealthy
 livenessProbe: 
   httpGet:
     path: /ping
-    port: {{ .Values.app.port }}
+    port: {{ .Values.app.uwsgi.port }}
   initialDelaySeconds: {{ .Values.app.liveness.initalDelay }}
   periodSeconds: {{ .Values.app.readiness.period }}
 ```

@@ -1,11 +1,13 @@
 # Values here will overwrite values.yaml defaults. These values are used when deploying locally to minikube
 # Application configuration
 app:
-  # default to the python app port
-  port: 7892
+  uwsgi:
+    port: 8000
   nginx:
     use: true
-    port: 8001
+    port: 80
+    httpPort: 80
+    httpsPort: 443
   liveness:
     use: true
     initialDelay: 15

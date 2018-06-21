@@ -1,13 +1,14 @@
 # This is the default values file, which should be treated as a template. Values should only be defined
 # here if they are shared accross all non-local environments. However, list and comment on all potential values.
 
-# Application configuration
 app:
-  # default to the python app port
-  port: 7892
+  uwsgi:
+    port: 8000
   nginx:
     use: true
-    port: 8001
+    port: 80
+    httpPort: 80
+    httpsPort: 443
   # liveness probe will restart the pod if it detects that it is unhealty
   liveness:
     use: true

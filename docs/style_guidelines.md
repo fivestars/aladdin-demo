@@ -89,7 +89,7 @@ http {
     server {
     listen {{ .Values.app.nginx.port }};
         location /app {
-            proxy_pass http://localhost:{{ .Values.app.port}};
+            proxy_pass http://localhost:{{ .Values.app.uwsgi.port}};
         }
         location / {
             root /usr/share/nginx/html;
