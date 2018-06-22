@@ -7,7 +7,7 @@ uwsgi:
   uid: aladdin-user
   gid: aladdin-user
   master: true
-  http: : {{ .Values.app.port }}
+  http: : {{ .Values.app.uwsgi.port }}
   wsgi-file: run.py
   callable: app
 {{ end }}

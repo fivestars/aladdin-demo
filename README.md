@@ -149,11 +149,13 @@ Also in the root of the Helm directory is a [values.yaml](heml/aladdin-demo/valu
 ```yaml
 # Application configuration
 app:
-  # default to the python app port
-  port: 7892
+  uwsgi:
+    port: 8000
   nginx:
     use: true
-    port: 8001
+    port: 80
+    httpPort: 80
+    httpsPort: 443
 
 deploy:
   # number of seconds for the containers to perform a graceful shutdown, after which it is voilently terminated
@@ -165,7 +167,7 @@ redis:
   port: 6379
   containerPort: 6379
 ```
-The values in this file can be accessed in other files through {{ .Values.\<value\> }}. For example, {{ .Values.app.port }} will resolve to 7892.
+The values in this file can be accessed in other files through {{ .Values.\<value\> }}. For example, {{ .Values.app.uwsgi.port }} will resolve to 8000.
 
 The environment can be specified through Aladdin, which will use the appropriate values file to deploy the project. It is common practice to have multiple environments, such as local, dev, staging, and prod, which may require different parameters to be set. In our example, we will use KDEV, KSTAG, and KPROD as three different Kubernetes clusters, and we put their respective values files in a separate [values](../helm/aladdin-demo/values) folder that Aladdin can find when running on that cluster. See the aladdin documentation for more detail on how to run in non-local environments.
 #### Templates
@@ -202,7 +204,7 @@ spec:
         workingDir: /home/{{ .Chart.Name}} 
         # Container port that is being exposed within the node
         ports:
-        - containerPort: {{ .Values.app.port }}
+        - containerPort: {{ .Values.app.uwsgi.port }}
           protocol: TCP
         # Mount the configuration file into the docker container
         volumeMounts:
@@ -237,7 +239,7 @@ spec:
   type: {{ .Values.service.publicServiceType | quote }}
   ports:
     - name: http
-      port: {{ .Values.app.port }}
+      port: {{ .Values.app.uwsgi.port }}
   selector:
     # Get the aladdin-demo-server deployment configuration from aladdin-demo/deploy.yaml
     name: {{ .Chart.Name }}-server
@@ -265,7 +267,7 @@ uwsgi:
   uid: aladdin-user
   gid: aladdin-user
   master: true
-  http: : {{ .Values.app.port }}
+  http: : {{ .Values.app.uwsgi.port }}
   wsgi-file: run.py
   callable: app
 {{ end }}

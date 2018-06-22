@@ -39,7 +39,7 @@ spec:
         workingDir: /home
         # Container port that is being exposed within the node
         ports:
-        - containerPort: {{ .Values.app.port }}
+        - containerPort: {{ .Values.app.uwsgi.port }}
           protocol: TCP
         # Mount the configuration file into the docker container
         volumeMounts:
@@ -69,7 +69,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /ping
-            port: {{ .Values.app.port }}
+            port: {{ .Values.app.uwsgi.port }}
           initialDelaySeconds: {{ .Values.app.readiness.initialDelay }}
           periodSeconds: {{ .Values.app.readiness.period }}
         {{ end }} # /app.readiness.use
@@ -78,7 +78,7 @@ spec:
         livenessProbe: 
           httpGet:
             path: /ping
-            port: {{ .Values.app.port }}
+            port: {{ .Values.app.uwsgi.port }}
           initialDelaySeconds: {{ .Values.app.liveness.initialDelay }}
           periodSeconds: {{ .Values.app.readiness.period }}
         {{ end }} # /app.liveness.use
