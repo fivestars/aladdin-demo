@@ -10,9 +10,4 @@ metadata:
 # Create key - value entries in the data map that other files can look up
 # Load them into the environment by using configMapRef in the deploy.yaml file
 data:
-  REDIS_CREATE: {{ .Values.redis.create | quote }}
-# datadog environment variables
-  APM_ENABLED: {{ .Values.apm.enable | quote }}
-  DATADOG_SERVICE_NAME: {{ .Chart.Name | quote }}
-  DATADOG_ENV: {{ .Values.apm.datadog_env | quote }}
-  DATADOG_TRACE_AGENT_HOSTNAME: {{ .Values.apm.datadog_trace_agent_hostname | quote }}
+  MESSAGE: {{ .Values.env.MESSAGE }}

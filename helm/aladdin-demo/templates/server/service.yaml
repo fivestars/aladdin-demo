@@ -19,18 +19,10 @@ spec:
   ports:
   - name: http
     port: {{ .Values.app.nginx.httpPort }}
-{{ if .Values.app.nginx.use }}
     targetPort: {{ .Values.app.nginx.port }}
-{{ else }}
-    targetPort: {{ .Values.app.uwsgi.port }}
-{{ end }}
   - name: https
     port: {{ .Values.app.nginx.httpsPort }}
-{{ if .Values.app.nginx.use }}
     targetPort: {{ .Values.app.nginx.port }}
-{{ else }}
-    targetPort: {{ .Values.app.uwsgi.port }}
-{{ end }}
   selector:
     # Get the aladdin-demo-server deployment configuration from sever/deploy.yaml
     name: {{ .Chart.Name }}-server

@@ -1,4 +1,2 @@
-ddtrace==0.11.0
-redis==2.10.6
 falcon==1.4.1
 uwsgi==2.0.15
