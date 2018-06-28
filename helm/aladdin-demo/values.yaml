@@ -9,39 +9,11 @@ app:
     port: 80
     httpPort: 80
     httpsPort: 443
-  # liveness probe will restart the pod if it detects that it is unhealty
-  liveness:
-    use: true
-    # number of seconds before the first probe
-    initialDelay: 15
-    # number of seconds for frequency between probes
-    period: 120
-  # readiness probe will hold off traffic and wait until the pod is ready
-  readiness:
-    use: true
-    initialDelay: 5
-    period: 60
-
-# Configurations for setting up apm tracing
-apm:
-  enable: false
-  datadog_trace_agent_hostname: datadog-agent.kube-system
-  datadog_env:
 
 deploy:
   # number of seconds for the containers to perform a graceful shutdown, after which it is voilently terminated
   terminationGracePeriod: 50
   replicas: 1
 
-redis:
-  # create: true
-  port: 6379
-  containerPort: 6379
-  liveness:
-    # use: true
-    initialDelay: 10
-    period: 15
-  readiness:
-    use: #true
-    initialDelay: 5
-    period: 10
+env:
+  MESSAGE: 'aladdin-demo message'

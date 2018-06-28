@@ -1,9 +1,6 @@
 import requests
 import os
 
-from redis.exceptions import RedisError
-from redis_util.redis_connection import ping_redis
-
 
 def parse_args(sub_parser):
     subparser = sub_parser.add_parser("status", help="Report on the status of the application")
@@ -14,7 +11,6 @@ def parse_args(sub_parser):
 def print_status(arg):
     """ Prints the status of the aladdin-demo pod and the redis pod """
     print_aladdin_demo_server_status()
-    print_redis_status()
 
 
 def print_aladdin_demo_server_status():
@@ -30,16 +26,3 @@ def print_aladdin_demo_server_status():
             print("aladdin demo server endpoint ping returned with status code {}".format(r.status_code))
     except requests.exceptions.ConnectionError as e:
         print("aladdin demo endpoint connection error: {}".format(e))
-
-
-def print_redis_status():
-    # TODO have this ping external redis when that gets added
-    print("pinging redis ...")
-    if os.environ["REDIS_CREATE"] == "false":
-        print("redis creation flag set to false, no other redis connection available at this time")
-        return
-    try:
-        status = ping_redis()
-        print("redis connection ping successful {}".format(status))
-    except RedisError as e:
-        print("redis connection error: {}".format(e))
