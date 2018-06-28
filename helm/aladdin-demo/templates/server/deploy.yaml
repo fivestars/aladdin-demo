@@ -57,13 +57,6 @@ spec:
           # This allows us to use os.environ["KEY"] to look up variables
           - configMapRef:
               name: {{ .Chart.Name }}
-        resources:
-          requests:
-            cpu: 100m
-            memory: 8Mi
-          limits:
-            cpu: 200m
-            memory: 16Mi
 ############# nginx server container ########
 ## This is a container for an nginx server
 #############################################
