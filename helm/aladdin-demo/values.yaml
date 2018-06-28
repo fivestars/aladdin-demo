@@ -4,6 +4,7 @@
 app:
   uwsgi:
     port: 8000
+    # processes: 16
   nginx:
     use: true
     port: 80
