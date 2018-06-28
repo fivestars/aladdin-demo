@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-server
@@ -8,6 +8,9 @@ metadata:
     app: {{ .Chart.Name }}-server
     githash: {{ .Values.deploy.imageTag }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-server
   replicas: {{ .Values.deploy.replicas }}
   strategy:
     type: RollingUpdate
