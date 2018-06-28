@@ -17,4 +17,4 @@ deploy:
   replicas: 1
 
 env:
-  MESSAGE: 'aladdin-demo message'
+  MESSAGE: 'aladdin-demo message2'
