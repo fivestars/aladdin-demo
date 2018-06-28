@@ -1,5 +1,5 @@
 {{if .Values.redis.create }}
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-redis
@@ -9,6 +9,9 @@ metadata:
     app: {{ .Chart.Name }}-redis
     githash: {{ .Values.deploy.imageTag }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-redis
   replicas: 1
   template:
     metadata:

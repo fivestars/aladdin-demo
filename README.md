@@ -175,7 +175,7 @@ The [templates](helm/aladdin-demo/templates/) directory is for template files. F
 
 In [server/deploy.yaml](helm/aladdin-demo/templates/server/deploy.yaml) we specify the Deployment object for the aladdin-demo app. The file contains a lot of different components for the integration of various other tools, but for the basic app, the deployment should look something like this. 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-server
