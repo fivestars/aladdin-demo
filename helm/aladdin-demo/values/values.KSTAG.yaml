@@ -1,1 +1,4 @@
 affinity: critical
+app:
+  uwsgi:
+    procsses: 16

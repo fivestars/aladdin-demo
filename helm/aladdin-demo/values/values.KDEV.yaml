@@ -1,1 +1,4 @@
 affinity: critical
+app:
+  uwsgi:
+    processes: 8

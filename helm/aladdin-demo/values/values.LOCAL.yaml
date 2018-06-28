@@ -3,6 +3,7 @@
 app:
   uwsgi:
     port: 8000
+    processes: 2
   nginx:
     use: true
     port: 80
@@ -39,4 +40,3 @@ redis:
     use: true
     initialDelay: 5
     period: 10
-
