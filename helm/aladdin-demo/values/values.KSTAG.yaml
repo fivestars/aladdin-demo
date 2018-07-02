@@ -11,3 +11,7 @@ apm:
   enable: false
   datadog_env: staging
 affinity: critical-datadog-apm
+
+app:
+  uwsgi:
+    processes: 16
