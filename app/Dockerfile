@@ -12,7 +12,7 @@ RUN apk add --no-cache \
         python3-dev
 
 # copies requirements.txt to the docker container
-ADD app/requirements.txt requirements.txt
+ADD requirements.txt requirements.txt
 
 # Install requirements
 RUN pip3 install --no-cache-dir -r requirements.txt
@@ -27,7 +27,7 @@ RUN apk del \
 WORKDIR /home
 
 # copy over the directory into docker container with given path
-COPY app /home
+COPY . /home
 
 # Create unprivileged user account
 RUN addgroup aladdin-user && \
