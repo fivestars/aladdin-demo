@@ -12,3 +12,7 @@ apm:
   enable: true
   datadog_env: prod
 affinity: critical-datadog-apm
+
+app:
+  uwsgi:
+    processes: 16

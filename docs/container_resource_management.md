@@ -12,17 +12,17 @@ The specifications are defined in the [deployment file](../helm/aladdin-demo/tem
 resources:
   requests:
     cpu: 100m
-    memory: 8Mi
+    memory: 100Mi
   limits:
     cpu: 200m
-    memory: 16Mi
+    memory: 200Mi
 ```
 
 You can read more about what the cpu and memory units mean [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-cpu). 
 
-The `request` above is essentially telling the kubernetes scheduler that this pod needs at least 100 millicores of CPU and 8MiB of memory. The scheduler will look at the requests of all the pods currently scheduled on a node, and will only schedule this pod if the node has at least 100m CPU and 8MiB of memory free. Note that this does not take into account how much resource the pods are actually consuming, only the request it has specified. This tries to ensure that all pods have suficient resources when being scheduled.
+The `request` above is essentially telling the kubernetes scheduler that this pod needs at least 100 millicores of CPU and 100MiB of memory. The scheduler will look at the requests of all the pods currently scheduled on a node, and will only schedule this pod if the node has at least 100m CPU and 100MiB of memory free. Note that this does not take into account how much resource the pods are actually consuming, only the request it has specified. This tries to ensure that all pods have suficient resources when being scheduled.
 
-The `limit` above puts a cap on the amount of resources the pod can consume. It allows the pod to be throttled if it starts using more than 200m CPU. If the pod uses more than 16Mi of memory, the scheduler will kill the pod and attempt to restart it. This prevents cases where a single pod is hogging all the resources, which could lead to other pods being throttled or evicted. 
+The `limit` above puts a cap on the amount of resources the pod can consume. It allows the pod to be throttled if it starts using more than 200m CPU. If the pod uses more than 200MiB of memory, the scheduler will kill the pod and attempt to restart it. This prevents cases where a single pod is hogging all the resources, which could lead to other pods being throttled or evicted.
 
 It is important to note that if a container specifies a resource `limit` but not a resource `request`, then the container's `request` is set to match its `limit`.
 

@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-server
@@ -8,6 +8,9 @@ metadata:
     app: {{ .Chart.Name }}-server
     githash: {{ .Values.deploy.imageTag }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-server
   replicas: {{ .Values.deploy.replicas }}
   strategy:
     type: RollingUpdate
@@ -60,10 +63,10 @@ spec:
         resources:
           requests:
             cpu: 100m
-            memory: 8Mi
+            memory: 100Mi
           limits:
             cpu: 200m
-            memory: 16Mi
+            memory: 200Mi
         {{ if .Values.app.readiness.use }}
         # Readiness probe stops traffic to this pod if it is not ready, wait until it is ready
         readinessProbe:

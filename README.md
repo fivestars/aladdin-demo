@@ -107,30 +107,18 @@ echo "Building aladdin-demo docker image (~30 seconds)"
 
 BUILD_PATH="$(cd "$(dirname "$0")"; pwd)"
 PROJ_ROOT="$(cd "$BUILD_PATH/.." ; pwd)"
-PRINT_ONLY="${PRINT_ONLY:-false}"
-HASH="${HASH:-local}"
-ALL="${ALL:-false}"
-
-print_only_cmd_wrapper() {
-    typeset cmd="$1"
-    echo "$cmd"
-    if ! $PRINT_ONLY; then
-        ${cmd}
-    fi
-}
 
 docker_build() {
     typeset name="$1" dockerfile="$2" context="$3"
     TAG="$name:${HASH}"
-    build_cmd="docker build -t $TAG -f $dockerfile $context"
-    print_only_cmd_wrapper "$build_cmd"
+    docker build -t $TAG -f $dockerfile $context
 }
 cd "$PROJ_ROOT"
 
-docker_build "aladdin-demo" "app/docker/aladdin-demo.Dockerfile" "."
+docker_build "aladdin-demo" "app/Dockerfile" "."
 
 #aws login because we are pulling from ecr for base image
-$(aws --profile sandbox ecr get-login)
+$(aws --profile sandbox ecr get-login --no-include-email)
 docker_build "aladdin-demo-commands" "app/commands_app/Dockerfile" "."
 ```
 ### Helm 
@@ -175,7 +163,7 @@ The [templates](helm/aladdin-demo/templates/) directory is for template files. F
 
 In [server/deploy.yaml](helm/aladdin-demo/templates/server/deploy.yaml) we specify the Deployment object for the aladdin-demo app. The file contains a lot of different components for the integration of various other tools, but for the basic app, the deployment should look something like this. 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-server
