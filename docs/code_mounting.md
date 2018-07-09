@@ -90,4 +90,4 @@ Here we are mounting the app folder in the aladdin-demo directory from our host 
 
 This option has some issues with file consistency (e.g. you update a file on your host machine but that update doesn't show on the container). This appears to be because minikube's default file mounting is 9p. This issue has been seen on containers using alpine as their base image, but may be seen on other images as well. Unless you have verified that these issues do not occur on your project, this option is NOT recommended. 
 
-Notice that in [app/Dockerfile](../app/Dockerfile), we copy over the code in `app` with `COPY app /home`, so everything still works when code mounting is turned off. The mounting will actually overrwrite these files, so the mounted code is used when `--with-mount` is used.
+Notice that in [app/Dockerfile](../app/Dockerfile), we copy over the code in `app` with `COPY . /home`, so everything still works when code mounting is turned off. The mounting will actually overrwrite these files, so the mounted code is used when `--with-mount` is used.
