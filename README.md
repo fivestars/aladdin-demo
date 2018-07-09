@@ -450,7 +450,7 @@ With these components in place, we have now created a simple project with Aladdi
 - [Code Mounting](docs/code_mounting.md)
 - [Commands Containers](docs/commands_containers.md)
 - [InitContainers](docs/init_containers.md)
-- [Liveness and Readiness Probes](docs/probes)
+- [Liveness and Readiness Probes](docs/probes.md)
 - [Using Nginx](docs/nginx.md)
 - [Using Redis](docs/redis.md)
 - [Autoscaling](docs/autoscaling.md)
