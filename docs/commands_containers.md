@@ -23,7 +23,7 @@ def print_status(arg):
 
 We will also need to create a Dockerfile for this container. The image for this commands container must be inherited from the aladdin `commands_base` docker image, and copy over the folder containing the command functions as `command`. We demonstrate this in the [Dockerfile](../app/commands_app/Dockerfile). 
 ```Dockerfile
-FROM fivestarsos/commands-base:v1.0.1
+FROM fivestarsos/commands-base:1.0.0
 ...
 COPY commands_app/commands commands
 ```
