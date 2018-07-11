@@ -1,4 +1,4 @@
-FROM fivestarsos/commands-base:v1.0.1
+FROM fivestarsos/commands-base:1.0.0
 
 COPY commands_app/requirements.txt ./requirements.txt
 COPY redis_util redis_util
