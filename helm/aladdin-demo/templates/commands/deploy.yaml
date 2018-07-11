@@ -21,8 +21,6 @@ spec:
         name: {{ .Chart.Name }}-commands
         app: {{ .Chart.Name }}-commands
     spec:
-      imagePullSecrets:
-        - name: aws
       containers:
       - image: {{ .Values.deploy.ecr }}{{ .Chart.Name }}-commands:{{ .Values.deploy.imageTag }}
         imagePullPolicy: {{.Values.deploy.imagePullPolicy}}

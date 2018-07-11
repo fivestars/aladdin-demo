@@ -1,11 +1,7 @@
 # Autoscaling
 Kubernetes provides autoscaling by CPU usage through a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). We give a simple demonstration of it in this demo project. As of Kubernetes 1.8, autoscaling by custom metrics is also available with autoscaling v2beta1. This requires setting up some extra metrics and we will not go over it in this demo.
 
-In Kubernetes 1.8, Heapster is being deprecated and will be replaced with Metrics-Server. In order to enable autoscaling, we must ensure that metrics-server is running. We should have it deployed in all non-local environments, but if you are running this locally with minikube, you will need to manually deploy it. You can deploy it with aladdin by cloning the aladdinized metrics-server repo from https://github.com/fivestars/metrics-server and running
-
-    $ aladdin start
-
-More information about metrics-server can be found [here](https://github.com/kubernetes-incubator/metrics-server)
+In Kubernetes 1.8, Heapster is being deprecated and will be replaced with Metrics-Server. In order to enable autoscaling, we must ensure that metrics-server is running. Please follow instructions [here](https://kubernetes.io/docs/tasks/debug-application-cluster/core-metrics-pipeline/) to do that.
 
 Next, we need to request cpu resources in the deployment file of the pod we are autoscaling. For each container in [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml), we add
 ```yaml

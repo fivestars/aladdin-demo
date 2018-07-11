@@ -24,9 +24,6 @@ spec:
       # Number of seconds for the containers to perform a graceful shutdown,
       # after which it is voilently terminated. This defaults to 30s, most apps may not need to change it
       terminationGracePeriodSeconds: {{ .Values.deploy.terminationGracePeriod }}
-      # This is needed when pulling from our ecr repo
-      imagePullSecrets:
-        - name: aws
       # Only schedule pods on nodes with the affinity: critical-datadog-apm label
       {{ if .Values.affinity }}
       nodeSelector:

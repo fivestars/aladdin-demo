@@ -16,45 +16,14 @@
 
 
 ## Directory Structure
-
-### Build Files
-The recommended structuring for build files is to have each project component directory hold their own build files. This way, each app manages its own `.dockerignore`, and it is easier to see which build files go with which project. It is also mirrors our recommended structuring style of helm files. 
-
-Aladdin currently only takes one build script, so there would still need a build script to rule them all for now, which can be located in the root directory. Usually just this one build script can build all the docker images, but if the project needs it, each app directory can also manage their own build script and have the main script call them.
-
-- lamp.json
-- build
-  - build_docker.sh
-- project/
-  - .dockerignore
-  - requirements.txt
-  - Dockerfile
-  - entrypoint.sh
-  - build_docker.sh
-  - app/
-    - code stuff
-  - test/
-    - requriements.txt
-    - Dockerfile
-    - code stuff/
-  - commands/
-    - .dockerignore
-    - requirements.txt
-    - Dockerfile
-    - entrypoint.sh
-    - build_docker.sh
-    - code stuff/
-- /helm
 ### Helm Files
-The recommended Helm directory structure is demonstrated below, with /helm at the root. Notably, within the /templates folder, have subdirectories for files specific to each component of the project, as well as a shared directory for shared files such as configMaps.
-
-With this subdirectory structure, the names of the yaml file no longer need to be <project name>-<component name>.deploy.yaml, as it will be reflected in the directory structure. We will just opt for the shorter 'deploy.yaml' etc. A possible exception is for configMaps containing configuration files, such as nginx or uwsgi configs, since a project component may need multiple of these files and just one configMap.yaml may not suffice. 
+The recommended Helm directory structure is demonstrated below, with /helm at the root. Notably, within the /templates folder, have subdirectories for files specific to each component of the project, as well as a shared directory for shared files such as configMaps. With this subdirectory structure, we recommend one file per k8s resource named the type of that resource.
 
 - /helm
   - /chartname
     - Chart.yaml
     - values.yaml
-    - /values
+    - /values # One file per cluster
       - values.DEV.yaml
       - values.STAG.yaml
       - values.PROD.yaml
@@ -76,21 +45,38 @@ With this subdirectory structure, the names of the yaml file no longer need to b
         - configMap.yaml
 
 ## Configuration Files
-All values should be stored in a values.yaml file. The templates should always reference values using helm variables. Configuration files for non-kubernetes objects, such as an nginx config file or a uwsgi config file, should be located in the template folder with a name that begins with an underscore and ends with ".tpl". This gives the ability to easily change configuration values on the fly, without needing to restart the pod every time.
+All values should be stored in a values.yaml file. The templates should always reference values using helm variables. Configuration files for non-kubernetes objects, such as an nginx config file or a uwsgi config file, should be located in the template folder with a name that begins with an underscore and ends with ".tpl".
 
 For example, below is the [\_nginx.conf.tpl](../helm/aladdin-demo/templates/server/_nginx.conf.tpl) file. 
 ```
 {{/* Config file for nginx */}}
+
+# Note: This define name is global, if loading multiple templates with the same name, the last
+# one loaded will be used.
 {{ define "nginx-config" -}}
+
+# Specify some event configs
 events {
     worker_connections 4096;
 }
+
+# Create a server that listens on the nginx port
+
 http { 
     server {
     listen {{ .Values.app.nginx.port }};
+        
+        # Match incoming request uri with "/app" and forward them to the uwsgi app
         location /app {
             proxy_pass http://localhost:{{ .Values.app.uwsgi.port}};
         }
+        # Match incoming request uri with "/ping" and forward them to the uwsgi app
+        location /ping {
+            proxy_pass http://localhost:{{ .Values.app.uwsgi.port}};
+        }
+        # Otherwise, nginx tries to serve static content. The only file should exist is index.html,
+        # which is written by the initContainer. Get requests with "/" or "/index.html" will return
+        # a short message, everything else will return 404
         location / {
             root /usr/share/nginx/html;
             index index.html;
@@ -103,15 +89,28 @@ This creates a named template that we can reference elsewhere with the give name
 
 In order to keep files modularized, we create a ConfigMap, the example below is [server/nginx.configMap.yaml](../helm/aladdin-demo/templates/server/nginx.configMap.yaml).
 ```yaml
+# ConfigMap for nginx
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-nginx
+  labels: 
+    project: {{ .Chart.Name }}
+    app: {{ .Chart.Name }}-nginx
+    name: {{ .Chart.Name }}-nginx
+    githash: {{ .Values.deploy.imageTag }}
 data:
-  # desired name for the file
+  # Make the key the desired name for the file
+  # When mounted, this will create a nginx.conf file with the contents in nginx-config template
   nginx.conf: {{ include "nginx-config" . | quote }}
 ```
-Under data, we can load the config file under its desired name, and we can attach the chart name. This file can then be mounted in the deploy template for our app, [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml), giving the docker container access to it.
+Under data, we can load the config file using the helm keyword `include`. This file can then be mounted in the deploy template for our app, [server/deploy.yaml](../helm/aladdin-demo/templates/server/deploy.yaml), giving the docker container access to it.
+```yaml
+volumes:
+  - name: {{ .Chart.Name }}-nginx
+    configMap:
+      name: {{ .Chart.Name }}-nginx
+```
 ```yaml
 volumeMounts:
   - mountPath: /etc/nginx/

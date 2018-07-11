@@ -12,7 +12,7 @@ Changing the `create` field to `true` and restarting the app with `aladdin resta
     
 This should return `I can show you the world from Redis`. In the Kubernetes dashboard, you should also see two pods, one named `aladdin-demo` and the other named `aladdin-demo-redis`. We will detail how everything fits together below. 
 
-We are using the `redis:2.8` image with no modifications, so a Dockerfile is not needed. Eventually our python app will be needing information about redis, so we can store this information as key-value pairs the [configMap](../helm/aladdin-demo/templates/shared/configMap.yaml).Ω¥
+We are using the `redis:2.8` image with no modifications, so a Dockerfile is not needed. Eventually our python app will be needing information about redis, so we can store this information as key-value pairs the [configMap](../helm/aladdin-demo/templates/shared/configMap.yaml).
 ```yaml
 data:
   REDIS_CREATE: {{ .Values.redis.create | quote }}
